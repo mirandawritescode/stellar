@@ -69,3 +69,36 @@ export interface NatalChart {
   ascendant?: { sign: Sign; degreeInSign: number; estimated: boolean };
   aspects: Aspect[];
 }
+
+export type Theme =
+  | "focus"
+  | "communication"
+  | "creative"
+  | "admin"
+  | "social"
+  | "selfcare"
+  | "money"
+  | "action";
+
+export type TaskCategory = Theme;
+
+export const TASK_CATEGORY_LABELS: Record<TaskCategory, string> = {
+  focus: "Focus work",
+  communication: "Calls & messages",
+  creative: "Creative",
+  admin: "Admin & errands",
+  social: "Social",
+  selfcare: "Self-care",
+  money: "Money",
+  action: "Physical & action",
+};
+
+export interface Task {
+  id: string;
+  title: string;
+  category: TaskCategory;
+  dueDate?: string;
+  done: boolean;
+  createdAt: string;
+  completedAt?: string;
+}

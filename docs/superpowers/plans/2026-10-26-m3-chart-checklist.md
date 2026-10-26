@@ -10,5 +10,5 @@ Spec: [docs/spec.md](../../spec.md), section 5 (natal chart calculation) and sec
   - Ambiguous Moon: when time is approximate or unknown, also compute the Moon at the window's bounds; if its sign differs, set `altSign`.
   - Natal aspects: conjunction/sextile/square/trine/opposition between the 10 planets, 8° orb for Sun/Moon aspects, 6° otherwise.
   - Fixture tests pass (signs exact, degrees within 1°) — 45 tests total.
-- [ ] **Chart page UI** — Simple view (Sun/Moon/rising with a sentence each, other planets as a sign+house list) and a Detailed view toggle (degrees, houses, natal aspects table); "Estimated" badges wherever time is approximate/unknown; ambiguous Moon shown as "Moon in X or Y".
-- [ ] **Verify** — `npm run check` passes; commit.
+- [x] **Chart page UI** — Simple view (Sun/Moon/rising with a sentence each, other planets as a sign+house list) and a Detailed view toggle (degrees, houses, natal aspects table); "Estimated" badges wherever time is approximate/unknown; ambiguous Moon shown as "Moon in X or Y". Verified live: Obama's chart matches reference data exactly; the ambiguous-Moon case ("Moon in Taurus or Gemini") triggered organically on real data, not just a synthetic test.
+- [x] **Verify** — `npm run check` passes; commit.

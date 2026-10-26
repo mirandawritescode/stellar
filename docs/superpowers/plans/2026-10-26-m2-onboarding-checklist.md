@@ -8,5 +8,5 @@ Spec: [docs/spec.md](../../spec.md), sections 3.2 and 13 ("M2. Onboarding").
   - Birth place (search box, debounced 500ms, needs 3+ characters)
 - [x] **Place search** — `/api/geocode` server route proxying Nominatim (never called directly from the browser); server-side throttle of 1 request/second; "Search results © OpenStreetMap contributors" attribution shown in the UI.
 - [x] **Time zone lookup** — confirm and install an offline lat/lon → time zone library (`tz-lookup` or `geo-tz`, per spec section 9) before using it in the geocode route. *(Chose tz-lookup.)*
-- [ ] **Save birth data** — on finishing onboarding, save `BirthData` to localStorage and go to `/chart?first=1`; revisiting the app later skips onboarding if data's already saved.
-- [ ] **Verify** — `npm run check` passes; commit.
+- [x] **Save birth data** — on finishing onboarding, save `BirthData` to localStorage and go to `/chart?first=1`; revisiting the app later skips onboarding if data's already saved.
+- [x] **Verify** — `npm run check` passes; commit.

@@ -7,6 +7,10 @@ import { isActiveRoute, TABS } from "@/lib/nav";
 export default function BottomNav() {
   const pathname = usePathname();
 
+  if (pathname.startsWith("/onboarding")) {
+    return null;
+  }
+
   return (
     <nav className="sticky bottom-0 border-t border-black/[.08] bg-white dark:border-white/[.145] dark:bg-black">
       <ul className="mx-auto flex max-w-[480px] items-stretch justify-around">

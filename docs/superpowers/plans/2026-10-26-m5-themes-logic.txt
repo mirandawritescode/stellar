@@ -1,0 +1,151 @@
+M5 — Transits & Themes: how the logic works
+Reference notes, written before implementation. See 2026-10-26-m5-reading-checklist.md
+for the build checklist and docs/spec.md section 6 for the source spec.
+
+THE BIG PICTURE
+
+Every day, the app looks at where the planets are RIGHT NOW ("transits") compared
+to where they were when the user was born ("natal chart"), and turns that
+comparison into a short list of "today's themes" - things like "good day for
+admin" or "go gently on money stuff." Those themes are what:
+  - the AI reading (later in M5) gets written around, and
+  - task ranking (M6) uses to bump relevant to-dos up the list.
+
+This file is about how "today's themes" actually get computed. There are two
+layers: TRANSITS (pure astronomy - where are the planets today, and which
+ones are forming an aspect with the user's natal planets), and THEMES (the
+interpretation layer - turning those aspects into a short, ranked list of
+8 possible life-area themes).
+
+STEP 1: TRANSITS
+
+Compute where every planet is TODAY at 12:00 noon, in the user's current
+browser time zone (not their birth time zone - just "today, around midday,
+wherever they are right now"). This reuses the same planet-position math
+already built for the natal chart in M3.
+
+Then compare each of today's planet positions against each of the user's
+NATAL planet positions, looking for aspects (conjunction, sextile, square,
+trine, opposition) - same aspect types as the natal chart, but now one side
+is "today" and the other side is "the day you were born."
+
+The orb (how close the angle has to be to count) is tighter for transits than
+for the natal chart, and varies by planet:
+  - Moon:                  4 degrees
+  - Sun, Mercury, Venus, Mars:  3 degrees
+  - Jupiter through Pluto:      2 degrees
+(Moon moves fast and matters a lot day-to-day, hence the wider orb. The outer
+planets move so slowly that a tight orb still catches a multi-day "window.")
+
+Also note: is Mercury, Venus, or Mars retrograde today? (Just the 3 that
+retrograde often enough to matter for daily planning - the outer planets
+retrograde for months at a time, so it's not a "today" kind of signal.)
+
+MOON PHASE
+
+A simplified 4-phase model, based on the angle between the Sun and Moon
+today (0-360 degrees):
+  new:     0-45 degrees
+  waxing:  45-135, and again 135-180 (both halves of "growing")
+  full:    180-225 degrees
+  waning:  225-360 degrees
+
+STEP 2: PLANET -> THEMES
+
+There are 8 "themes" (same vocabulary as task categories from M4):
+  focus, communication, creative, admin, social, selfcare, money, action
+
+Each transiting planet maps to 1-3 of them - this is what makes "Mercury is
+making an aspect today" turn into "communication and admin are relevant
+today":
+
+  Sun      -> focus
+  Moon     -> selfcare
+  Mercury  -> communication, admin
+  Venus    -> social, creative, money
+  Mars     -> action, focus
+  Jupiter  -> money, social
+  Saturn   -> admin, focus
+  Uranus   -> creative
+  Neptune  -> creative, selfcare
+  Pluto    -> focus
+
+STEP 3: THE 10 STARTER RULES
+
+Each aspect found in Step 1 gets run through these rules to build up a
+"strength" score (1-3) per theme, plus a plain-English reason. The rules are
+meant to be simple and tweakable later (each is its own small rule object,
+not hardcoded logic), so expect these exact numbers to get adjusted after
+real-world testing.
+
+1. Harmonious aspect (trine or sextile) from a transiting planet
+   -> that planet's theme(s) each gain +1 strength.
+   Example: transiting Mercury trine natal Sun -> communication +1, admin +1.
+
+2. Conjunction
+   -> that planet's theme(s) gain +1 strength AND get flagged "intense"
+      (shown differently in the reading/UI - a conjunction is a stronger,
+      more concentrated kind of aspect than a trine/sextile).
+
+3. Challenging aspect (square or opposition)
+   -> that planet's theme(s) go into the CAUTION list instead of gaining
+      strength. Caution doesn't mean "skip it" - it means "do it, but in
+      smaller pieces today."
+
+4. Any aspect (of any kind above) TO THE NATAL SUN OR MOON specifically
+   -> counts DOUBLE. The Sun and Moon are the two most personally significant
+      points in a chart, so an aspect landing on either one matters more than
+      the same aspect landing on, say, natal Mars.
+   Example: transiting Mercury trine natal MOON isn't +1 communication/admin,
+   it's +2 communication/admin, because it's hitting the Moon.
+
+5. Moon phase gives one flat bonus, regardless of aspects:
+     new     -> +1 focus      (a good day to start things)
+     waxing  -> +1 action
+     full    -> +1 social     (also: a good day to finish and review things)
+     waning  -> +1 admin      (a good day to clear the decks)
+
+6. Mercury retrograde today -> +1 admin (review, edit, follow up on things),
+   AND communication goes into caution (miscommunications are more likely).
+
+7. Venus retrograde today -> money goes into caution.
+
+8. Mars retrograde today -> action goes into caution, AND +1 selfcare
+   (the idea being: low-energy days are a cue to rest, not push).
+
+9. Fallback: if NO theme reaches strength 1 after all the above (a quiet,
+   uneventful day astrologically), default to focus 1 and admin 1 so the
+   app always has something to say.
+
+10. Cleanup: cap every theme's strength at 3 (no matter how many rules stack
+    up), keep only the TOP 3 themes overall, and keep a human-readable
+    reason string for each boost (e.g. "Mercury trine your Sun") so the UI
+    and the AI reading can explain WHY a theme is relevant, not just THAT
+    it is.
+
+A WORKED EXAMPLE
+
+Say today: transiting Mercury is trine the user's natal Sun, transiting Mars
+is square the user's natal Venus, the Moon is in its waning phase, and
+nothing is retrograde.
+
+  - Mercury trine natal Sun: rule 1 (harmonious, +1 communication/admin),
+    then rule 4 doubles it because it's hitting the natal Sun
+    -> communication +2, admin +2, reason "Mercury trine your Sun"
+  - Mars square natal Venus: rule 3 (challenging) -> social and creative
+    (Venus's themes) go into caution, reason "Mars square your Venus"
+    (note: Mars's OWN themes - action, focus - aren't touched by this
+    rule; it's Venus's themes that get the caution flag, since Venus is
+    the one under challenging pressure)
+  - Waning moon: rule 5 -> admin +1 more (now admin is at 3, capped)
+
+Result: top themes are admin (3) and communication (2); caution list is
+[social, creative]; moon phase "waning."
+
+WHERE THIS FEEDS NEXT
+
+- The AI reading (rest of M5) gets this DayThemes object as its grounding
+  facts - it's not allowed to invent anything the rules didn't produce.
+- Task ranking (M6) matches each task's category against these same theme
+  names to bump matching tasks up the list, and softens (but doesn't hide)
+  tasks whose category is in the caution list.

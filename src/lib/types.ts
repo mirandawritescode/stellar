@@ -16,3 +16,56 @@ export interface BirthData {
   approxWindow?: ApproxWindow;
   place: BirthPlace;
 }
+
+export type Planet =
+  | "Sun"
+  | "Moon"
+  | "Mercury"
+  | "Venus"
+  | "Mars"
+  | "Jupiter"
+  | "Saturn"
+  | "Uranus"
+  | "Neptune"
+  | "Pluto";
+
+export type Sign =
+  | "Aries"
+  | "Taurus"
+  | "Gemini"
+  | "Cancer"
+  | "Leo"
+  | "Virgo"
+  | "Libra"
+  | "Scorpio"
+  | "Sagittarius"
+  | "Capricorn"
+  | "Aquarius"
+  | "Pisces";
+
+export interface PlanetPosition {
+  planet: Planet;
+  longitude: number;
+  sign: Sign;
+  degreeInSign: number;
+  house?: number;
+  retrograde: boolean;
+  altSign?: Sign;
+}
+
+export type AspectType = "conjunction" | "sextile" | "square" | "trine" | "opposition";
+
+export interface Aspect {
+  a: Planet;
+  b: Planet;
+  type: AspectType;
+  orb: number;
+}
+
+export interface NatalChart {
+  version: 1;
+  computedFrom: { date: string; timeUsed: string; timeAccuracy: TimeAccuracy };
+  planets: PlanetPosition[];
+  ascendant?: { sign: Sign; degreeInSign: number; estimated: boolean };
+  aspects: Aspect[];
+}

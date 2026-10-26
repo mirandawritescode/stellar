@@ -1,0 +1,79 @@
+M4 — Tasks: how the logic works
+Reference notes, written before implementation. See 2026-10-26-m4-tasks-checklist.md for the build checklist and docs/spec.md sections 3.5 and 4 for the source spec.
+
+WHAT A TASK IS
+
+Each task is a small record:
+
+  {
+    id: "a1b2c3...",         a random unique ID
+    title: "Call the dentist",
+    category: "communication",
+    dueDate: "2026-11-05",   optional - some tasks have no due date
+    done: false,
+    createdAt: "2026-10-20T14:00:00Z",
+    completedAt: undefined,  only set once the task is checked off
+  }
+
+"category" isn't free text. It's one of 8 fixed options:
+  Focus work, Calls & messages, Creative, Admin & errands,
+  Social, Self-care, Money, Physical & action.
+
+These 8 categories are the same vocabulary the astrology side of the
+app uses as "themes" starting in M5/M6, so a task's category is how
+it'll eventually get matched against the day's astrological themes
+(e.g. "good day for calls"). In M4 the category is just a label you
+pick by hand; the matching logic itself comes later in M6.
+
+WHERE TASKS LIVE
+
+Same pattern as birth data: everything is saved to localStorage under
+a key like "ap:tasks", nothing is sent to a server. saveTasks() /
+loadTasks() read and write the whole list as JSON each time.
+
+THE ORDER THE LIST SHOWS UP IN
+
+Two groups, always in this order:
+
+1. Open tasks (not done yet), sorted by due date - soonest first.
+   Tasks with no due date go last.
+2. Completed tasks, but only ones finished in the last 7 days. Older
+   completions simply stop showing in the list (they aren't deleted
+   yet at that point - see cleanup below).
+
+Example: 3 open tasks, and a 4th finished yesterday, would show as:
+  - open task due tomorrow
+  - open task due next week
+  - open task with no due date
+  - the task completed yesterday (bottom, since it's within 7 days)
+
+THE AUTOMATIC CLEANUP
+
+Separate from what's shown, there's a janitor rule: any completed
+task older than 30 DAYS gets permanently deleted from storage the
+next time the app loads. This keeps localStorage from silently
+growing forever with ancient finished to-dos nobody will look at
+again.
+
+Note the two different numbers:
+  - 7 days  = stop SHOWING completed clutter in the list
+  - 30 days = actually DELETE it from storage
+
+ADD / EDIT
+
+One form handles both - same fields (title, category, due date),
+just pre-filled with the existing values when editing instead of
+starting blank.
+  - title: required, max 120 characters
+  - category: required
+  - due date: optional
+
+COMPLETE / DELETE
+
+Checking a task off just flips done: true and stamps completedAt
+with the current time - it doesn't disappear immediately, it just
+moves into the "recently completed" group until the 7-day window
+passes.
+
+Deleting is more final, so it goes through a confirm step before the
+task is actually removed from storage.

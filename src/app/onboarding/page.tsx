@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { GeocodeResult } from "@/lib/geocode";
 import { isBirthTimeComplete, isValidBirthDate } from "@/lib/onboarding";
-import type { ApproxWindow, TimeAccuracy } from "@/lib/types";
+import { saveBirthData } from "@/lib/storage/birthData";
+import type { ApproxWindow, BirthData, TimeAccuracy } from "@/lib/types";
 
 const MIN_PLACE_QUERY_LENGTH = 3;
 const PLACE_SEARCH_DEBOUNCE_MS = 500;
@@ -22,6 +24,7 @@ const buttonClass =
   "min-h-[44px] rounded-md border border-black/[.12] px-4 py-2 text-sm font-medium dark:border-white/[.18]";
 
 export default function OnboardingPage() {
+  const router = useRouter();
   const [step, setStep] = useState(0);
   const [touched, setTouched] = useState(false);
 
@@ -82,6 +85,24 @@ export default function OnboardingPage() {
   function goBack() {
     setTouched(false);
     setStep((s) => Math.max(s - 1, 0));
+  }
+
+  const isComplete = dateValid && timeValid && selectedPlace !== null;
+
+  function handleFinish() {
+    if (!isComplete || !selectedPlace) return;
+
+    const birthData: BirthData = {
+      version: 1,
+      date,
+      timeAccuracy,
+      ...(timeAccuracy === "exact" ? { time } : {}),
+      ...(timeAccuracy === "approximate" ? { approxWindow } : {}),
+      place: selectedPlace,
+    };
+
+    saveBirthData(birthData);
+    router.push("/chart?first=1");
   }
 
   return (
@@ -239,9 +260,6 @@ export default function OnboardingPage() {
           <p className="text-xs text-zinc-500 dark:text-zinc-400">
             Search results © OpenStreetMap contributors
           </p>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Saving isn&apos;t connected yet &mdash; that&apos;s next.
-          </p>
         </section>
       )}
 
@@ -259,7 +277,12 @@ export default function OnboardingPage() {
             Next
           </button>
         ) : (
-          <button type="button" disabled className={`${buttonClass} disabled:opacity-40`}>
+          <button
+            type="button"
+            onClick={handleFinish}
+            disabled={!isComplete}
+            className={`${buttonClass} disabled:opacity-40`}
+          >
             Finish
           </button>
         )}

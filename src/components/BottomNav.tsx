@@ -13,7 +13,7 @@ export default function BottomNav() {
 
   return (
     <nav className="sticky bottom-0 border-t border-black/[.08] bg-white dark:border-white/[.145] dark:bg-black">
-      <ul className="mx-auto flex max-w-[480px] items-stretch justify-around">
+      <ul className="mx-auto flex max-w-[720px] items-stretch justify-around">
         {TABS.map((tab) => {
           const active = isActiveRoute(pathname, tab.href);
           return (

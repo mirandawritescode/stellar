@@ -99,7 +99,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-[480px] flex-1 flex-col gap-6 p-6">
+    <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-6 p-6">
       {step === 0 && (
         <section className="flex flex-col gap-2">
           <label htmlFor="birth-date" className="text-lg font-semibold">

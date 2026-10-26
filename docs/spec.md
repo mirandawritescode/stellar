@@ -17,7 +17,7 @@ Each morning the user opens the app and sees:
 They set up their birth details once. Everything is stored in their browser; there are no accounts.
 
 ### v1 goals
-- Works well on an iPhone in Safari and as a Home Screen web app.
+- Works well on a desktop browser. Mobile/iPhone support (including Home Screen install) is deferred — see section 11.
 - Accurate chart math, honest about missing birth details.
 - Runs locally with a portfolio-quality README; hosting comes later.
 
@@ -319,6 +319,8 @@ Write the tests first: one test per factor, plus ties and an empty list.
 
 ## 10. Installable web app (PWA)
 
+Deferred along with mobile support generally (see section 11 and section 14) — not part of the M7 work until mobile is revisited.
+
 - `public/manifest.webmanifest`: name, short name, `display: "standalone"`, theme and background colors, icons 192px and 512px plus an Apple touch icon.
 - iOS meta tags for standalone mode and status bar.
 - A minimal service worker is optional in v1; if added, cache only the app shell, never API responses.
@@ -327,10 +329,10 @@ Write the tests first: one test per factor, plus ties and an empty list.
 
 ## 11. Design
 
-- Mobile-first, single column, max content width 480px on larger screens.
+- **Desktop-first for now.** Single column, max content width 720px, centered. Mobile-first responsive design (small-screen layout, touch tap-target sizing) is deferred to a later pass — see section 14.
 - Design tokens in Tailwind config: colors [placeholder: deep indigo background, warm gold accent, soft off-white text], font pair [placeholder: a serif for headings, a clean sans for body]. Mira will replace these.
 - Support light and dark mode via `prefers-color-scheme`.
-- Contrast at least WCAG AA; tap targets at least 44px; visible focus states; respects reduced motion.
+- Contrast at least WCAG AA; visible focus states; respects reduced motion.
 - Tone of UI copy: friendly, short, never preachy.
 
 ---
@@ -393,6 +395,7 @@ Work in this order. Each milestone ends with `npm run check` passing and a local
 
 ## 14. v2 backlog (not in v1)
 
+- Mobile-first responsive pass: small-screen layout, touch tap-target sizing (44px), Home Screen/PWA install on iPhone Safari (deferred in section 11 — desktop-first for now)
 - Push to GitHub, CI with GitHub Actions, and hosting on Vercel's free plan
 - Morning energy check-in that adjusts the day's load
 - Hour-by-hour plan view

@@ -4,7 +4,7 @@ Project memory for Claude Code. Read this first in every session, then `docs/spe
 
 ## What we're building
 
-**Astro Planner** (working name): a free, mobile-first web app that reads a user's natal chart and the day's transits, writes a short AI daily reading, and ranks their to-do list for the day.
+**Astro Planner** (working name): a free web app that reads a user's natal chart and the day's transits, writes a short AI daily reading, and ranks their to-do list for the day. Desktop-first for now; mobile support is deferred (see `docs/spec.md` section 11).
 
 - Owner: Mira, an experienced web developer who is new to Claude Code.
 - Goal: a working, portfolio-quality v1 in **2 weeks** (about 20 hours total), running **locally only** for now.
@@ -67,7 +67,7 @@ docs/               spec, project plan, decision notes
 
 - TypeScript strict; no `any`. Shared types live in `src/lib/types.ts`.
 - Astrology and planner logic are **pure functions** in `src/lib/`, with Vitest tests. UI components stay thin.
-- Mobile-first layouts; tap targets at least 44px; accessible color contrast; semantic HTML.
+- Desktop-first for now (single column, max content width 720px); accessible color contrast; semantic HTML. Mobile-first responsive layout and touch tap-target sizing are deferred — see spec section 11 and 14.
 - Handle loading, empty and error states on every screen.
 - Dates: store ISO strings; do time-zone math with Luxon, never with raw `Date` offsets.
 

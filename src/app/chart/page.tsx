@@ -32,7 +32,7 @@ export default function ChartPage() {
 
   if (birthData === null) {
     return (
-      <div className="mx-auto flex max-w-[480px] flex-1 flex-col gap-4 p-6">
+      <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-4 p-6">
         <h1 className="text-lg font-semibold">Chart</h1>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">No birth details saved yet.</p>
         <Link href="/onboarding" className="text-sm font-medium underline">
@@ -49,7 +49,7 @@ export default function ChartPage() {
   const housesEstimated = chart.ascendant?.estimated ?? false;
 
   return (
-    <div className="mx-auto flex max-w-[480px] flex-1 flex-col gap-4 p-6">
+    <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-4 p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold">Chart</h1>
         <button

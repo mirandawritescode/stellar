@@ -57,7 +57,7 @@ const UNKNOWN_WINDOW_BOUNDS: [TimeBound, TimeBound] = [
   { hour: 23, minute: 59 },
 ];
 
-const ASPECT_ANGLES: Record<AspectType, number> = {
+export const ASPECT_ANGLES: Record<AspectType, number> = {
   conjunction: 0,
   sextile: 60,
   square: 90,
@@ -84,7 +84,7 @@ export function pickAltSign(startSign: Sign, endSign: Sign): Sign | undefined {
   return startSign !== endSign ? endSign : undefined;
 }
 
-function angleDiff(a: number, b: number): number {
+export function angleDiff(a: number, b: number): number {
   const diff = Math.abs(a - b) % 360;
   return diff > 180 ? 360 - diff : diff;
 }

@@ -30,6 +30,7 @@ export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[] | undefined>(undefined);
   const [form, setForm] = useState<FormState | null>(null);
   const [touched, setTouched] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing from localStorage, a browser-only external system unavailable during SSR
@@ -93,6 +94,21 @@ export default function TasksPage() {
       persist(next);
     }
     closeForm();
+  }
+
+  function handleToggleDone(task: Task) {
+    const willBeDone = !task.done;
+    const next = taskList.map((t) =>
+      t.id === task.id
+        ? { ...t, done: willBeDone, completedAt: willBeDone ? new Date().toISOString() : undefined }
+        : t,
+    );
+    persist(next);
+  }
+
+  function handleDelete(id: string) {
+    persist(taskList.filter((t) => t.id !== id));
+    setConfirmDeleteId(null);
   }
 
   return (
@@ -182,12 +198,22 @@ export default function TasksPage() {
           {ordered.map((task) => (
             <li
               key={task.id}
-              className="flex items-center justify-between gap-2 rounded-md border border-black/[.12] px-3 py-2 dark:border-white/[.18]"
+              className="flex items-center gap-1 rounded-md border border-black/[.12] px-1 py-1 dark:border-white/[.18]"
             >
+              <label className="flex h-11 w-11 flex-shrink-0 items-center justify-center">
+                <input
+                  type="checkbox"
+                  checked={task.done}
+                  onChange={() => handleToggleDone(task)}
+                  className="h-5 w-5"
+                  aria-label={task.done ? `Mark "${task.title}" not done` : `Mark "${task.title}" done`}
+                />
+              </label>
+
               <button
                 type="button"
                 onClick={() => openEditForm(task)}
-                className="flex flex-1 flex-col items-start text-left"
+                className="flex min-h-[44px] flex-1 flex-col items-start justify-center text-left"
               >
                 <span className={task.done ? "text-zinc-500 line-through dark:text-zinc-400" : ""}>
                   {task.title}
@@ -197,6 +223,35 @@ export default function TasksPage() {
                   {task.dueDate && ` · Due ${task.dueDate}`}
                 </span>
               </button>
+
+              {confirmDeleteId === task.id ? (
+                <div className="flex flex-shrink-0 items-center gap-1 pr-1">
+                  <span className="text-xs text-zinc-500 dark:text-zinc-400">Delete?</span>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(task.id)}
+                    className="min-h-[44px] px-2 text-xs font-medium text-red-600 dark:text-red-400"
+                  >
+                    Yes
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDeleteId(null)}
+                    className="min-h-[44px] px-2 text-xs font-medium"
+                  >
+                    No
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setConfirmDeleteId(task.id)}
+                  aria-label={`Delete "${task.title}"`}
+                  className="min-h-[44px] flex-shrink-0 px-2 text-xs text-zinc-500 dark:text-zinc-400"
+                >
+                  Delete
+                </button>
+              )}
             </li>
           ))}
         </ul>

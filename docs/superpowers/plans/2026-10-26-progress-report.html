@@ -1,0 +1,567 @@
+<title>Astro Planner — Progress Report — 2026-10-26</title>
+<meta name="description" content="Build log for Astro Planner: what's shipped across M1–M3, bugs caught, and what's next.">
+<style>
+  :root {
+    --bg: #faf7f0;
+    --surface: #ffffff;
+    --surface-2: #f2ede1;
+    --text: #221c36;
+    --text-muted: #6b6386;
+    --accent: #a9812f;
+    --accent-contrast: #ffffff;
+    --border: rgba(34, 28, 54, 0.12);
+    --rule: rgba(34, 28, 54, 0.08);
+    --done-bg: #e3efe6;
+    --done-text: #2f6b45;
+    --pending-bg: #efedf5;
+    --pending-text: #5c5578;
+    --fixed-bg: #faf0e2;
+    --fixed-text: #93601c;
+    --fixed-border: rgba(169, 129, 47, 0.3);
+    --shadow: rgba(34, 28, 54, 0.08);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #130f1f;
+      --surface: #1c1830;
+      --surface-2: #231e3a;
+      --text: #f1ede4;
+      --text-muted: #a79fc2;
+      --accent: #d8b05f;
+      --accent-contrast: #1c1830;
+      --border: rgba(216, 176, 95, 0.18);
+      --rule: rgba(216, 176, 95, 0.12);
+      --done-bg: rgba(127, 174, 142, 0.16);
+      --done-text: #9fd1ae;
+      --pending-bg: rgba(167, 159, 194, 0.12);
+      --pending-text: #b6aed4;
+      --fixed-bg: rgba(216, 176, 95, 0.1);
+      --fixed-text: #e4c27f;
+      --fixed-border: rgba(216, 176, 95, 0.25);
+      --shadow: rgba(0, 0, 0, 0.45);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #130f1f;
+    --surface: #1c1830;
+    --surface-2: #231e3a;
+    --text: #f1ede4;
+    --text-muted: #a79fc2;
+    --accent: #d8b05f;
+    --accent-contrast: #1c1830;
+    --border: rgba(216, 176, 95, 0.18);
+    --rule: rgba(216, 176, 95, 0.12);
+    --done-bg: rgba(127, 174, 142, 0.16);
+    --done-text: #9fd1ae;
+    --pending-bg: rgba(167, 159, 194, 0.12);
+    --pending-text: #b6aed4;
+    --fixed-bg: rgba(216, 176, 95, 0.1);
+    --fixed-text: #e4c27f;
+    --fixed-border: rgba(216, 176, 95, 0.25);
+    --shadow: rgba(0, 0, 0, 0.45);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 6rem;
+  }
+
+  h1, h2, h3 {
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+    font-weight: 400;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  .mono {
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, "Liberation Mono", monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Masthead ---------- */
+
+  .masthead {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .eyebrow {
+    margin: 0;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .masthead-title {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  .masthead h1 {
+    font-size: 2.6rem;
+    letter-spacing: -0.01em;
+  }
+
+  .report-date {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
+
+  .dek {
+    margin: 0;
+    max-width: 46ch;
+    color: var(--text-muted);
+    font-size: 1.05rem;
+  }
+
+  .tracker {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+  }
+
+  .tracker-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    align-items: center;
+  }
+
+  .tracker-bar {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--pending-bg);
+  }
+
+  .tracker-item.done .tracker-bar {
+    background: var(--accent);
+  }
+
+  .tracker-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .tracker-item.done .tracker-label {
+    color: var(--text);
+  }
+
+  /* ---------- Stats ---------- */
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 2.5rem 0;
+  }
+
+  .stat {
+    background: var(--surface);
+    padding: 1.1rem 0.75rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    display: block;
+    font-family: Georgia, "Iowan Old Style", serif;
+    font-size: 1.7rem;
+    color: var(--accent);
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+  }
+
+  /* ---------- Milestones ---------- */
+
+  .milestone {
+    margin-top: 3rem;
+    padding-top: 0.25rem;
+  }
+
+  .milestone-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+  }
+
+  .milestone-tag {
+    font-family: Georgia, serif;
+    font-size: 0.95rem;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .milestone-head h2 {
+    font-size: 1.5rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .status-chip {
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .status-chip.done { background: var(--done-bg); color: var(--done-text); }
+  .status-chip.extra { background: var(--pending-bg); color: var(--pending-text); }
+
+  .milestone-summary {
+    margin: 0.6rem 0 0;
+    color: var(--text-muted);
+    max-width: 62ch;
+  }
+
+  .built-list {
+    margin: 1.1rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .built-list li {
+    position: relative;
+    padding-left: 1.3rem;
+  }
+
+  .built-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .caught-box {
+    margin-top: 1.1rem;
+    padding: 0.9rem 1.1rem;
+    background: var(--fixed-bg);
+    border: 1px solid var(--fixed-border);
+    border-radius: 8px;
+  }
+
+  .caught-box h3 {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fixed-text);
+    font-weight: 700;
+    margin: 0 0 0.6rem;
+  }
+
+  .caught-box ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .caught-box li {
+    position: relative;
+    padding-left: 1.2rem;
+    font-size: 0.95rem;
+  }
+
+  .caught-box li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--fixed-text);
+  }
+
+  .commits {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .commit {
+    display: flex;
+    gap: 0.6rem;
+    font-size: 0.82rem;
+    align-items: baseline;
+  }
+
+  .commit .hash {
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .commit .msg {
+    color: var(--text-muted);
+    overflow-wrap: anywhere;
+  }
+
+  /* ---------- What's next ---------- */
+
+  .whats-next {
+    margin-top: 3.5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .whats-next h2 {
+    font-size: 1.5rem;
+  }
+
+  .next-list {
+    margin: 1.2rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .next-list li {
+    display: flex;
+    gap: 0.9rem;
+    align-items: baseline;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--rule);
+    color: var(--text-muted);
+  }
+
+  .next-list .tag {
+    font-family: Georgia, serif;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    width: 2.2rem;
+  }
+
+  .next-list .name {
+    color: var(--text);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .next-list .desc {
+    font-size: 0.92rem;
+  }
+
+  footer {
+    margin-top: 3.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 560px) {
+    .masthead h1 { font-size: 2.1rem; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .tracker-label { display: none; }
+    .next-list li { flex-wrap: wrap; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .milestone, .masthead, .stats-row, .whats-next {
+      animation: rise 0.5s ease-out both;
+    }
+    .milestone:nth-of-type(2) { animation-delay: 0.05s; }
+    .milestone:nth-of-type(3) { animation-delay: 0.1s; }
+    .milestone:nth-of-type(4) { animation-delay: 0.15s; }
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <p class="eyebrow">Astro Planner · Build Log</p>
+    <div class="masthead-title">
+      <h1>Progress report</h1>
+      <span class="report-date mono">2026-10-26</span>
+    </div>
+    <p class="dek">A 2-week, $0 build. Three of eight milestones are done — skeleton, onboarding, and a real computed natal chart.</p>
+    <div class="tracker">
+      <div class="tracker-item done"><div class="tracker-bar"></div><span class="tracker-label">M1</span></div>
+      <div class="tracker-item done"><div class="tracker-bar"></div><span class="tracker-label">M2</span></div>
+      <div class="tracker-item done"><div class="tracker-bar"></div><span class="tracker-label">M3</span></div>
+      <div class="tracker-item"><div class="tracker-bar"></div><span class="tracker-label">M4</span></div>
+      <div class="tracker-item"><div class="tracker-bar"></div><span class="tracker-label">M5</span></div>
+      <div class="tracker-item"><div class="tracker-bar"></div><span class="tracker-label">M6</span></div>
+      <div class="tracker-item"><div class="tracker-bar"></div><span class="tracker-label">M7</span></div>
+      <div class="tracker-item"><div class="tracker-bar"></div><span class="tracker-label">M8</span></div>
+    </div>
+  </header>
+
+  <section class="stats-row">
+    <div class="stat"><span class="stat-num mono">13</span><span class="stat-label">commits</span></div>
+    <div class="stat"><span class="stat-num mono">45</span><span class="stat-label">tests passing</span></div>
+    <div class="stat"><span class="stat-num mono">3</span><span class="stat-label">live bugs caught</span></div>
+    <div class="stat"><span class="stat-num mono">3/8</span><span class="stat-label">milestones done</span></div>
+  </section>
+
+  <section class="milestone" id="m1">
+    <div class="milestone-head">
+      <span class="milestone-tag">M1</span>
+      <h2>Skeleton</h2>
+      <span class="status-chip done">Done</span>
+    </div>
+    <p class="milestone-summary">The app's foundation: a running Next.js project, local version control, and the four-tab shell every later screen hangs off of.</p>
+    <ul class="built-list">
+      <li>Next.js 16 + TypeScript (strict) + Tailwind, scaffolded without touching the existing README, CLAUDE.md, or docs</li>
+      <li>Local git repo; <span class="mono">.gitignore</span> verified to exclude <span class="mono">node_modules</span>, <span class="mono">.next</span>, and every <span class="mono">.env*</span> file</li>
+      <li><span class="mono">lint</span>, <span class="mono">typecheck</span>, <span class="mono">test</span>, and <span class="mono">check</span> scripts wired up with Vitest</li>
+      <li>Bottom tab bar (Today, Tasks, Chart, Settings) across four placeholder pages, with the route-highlighting logic unit-tested</li>
+    </ul>
+    <div class="caught-box">
+      <h3>Caught &amp; fixed</h3>
+      <ul>
+        <li>The nav bar wasn't pinned to the screen's bottom edge on short pages — a flex-layout bug, fixed and reverified in the browser</li>
+        <li><span class="mono">create-next-app</span> had generated a duplicate <span class="mono">AGENTS.md</span> alongside <span class="mono">CLAUDE.md</span> — disabled, so there's one source of truth for agent instructions</li>
+        <li><span class="mono">package.json</span> still carried the scaffold folder's placeholder name — corrected to <span class="mono">astro-planner</span></li>
+      </ul>
+    </div>
+    <div class="commits">
+      <div class="commit"><span class="hash mono">8b85080</span><span class="msg">chore: scaffold Next.js app with TypeScript and Tailwind</span></div>
+      <div class="commit"><span class="hash mono">b75c038</span><span class="msg">chore: add typecheck, test and check scripts</span></div>
+      <div class="commit"><span class="hash mono">a0bb54a</span><span class="msg">feat: add bottom tab bar and four placeholder pages</span></div>
+    </div>
+  </section>
+
+  <section class="milestone" id="m2">
+    <div class="milestone-head">
+      <span class="milestone-tag">M2</span>
+      <h2>Onboarding</h2>
+      <span class="status-chip done">Done</span>
+    </div>
+    <p class="milestone-summary">Collects and saves the three facts the whole app runs on: birth date, birth time, and birth place.</p>
+    <ul class="built-list">
+      <li>Three-step flow at <span class="mono">/onboarding</span> — birth date, birth time (exact / rough window / unknown), birth place — with Back/Next and per-step validation</li>
+      <li><span class="mono">/api/geocode</span> server route proxying OpenStreetMap Nominatim, throttled to 1 request/second, with attribution shown in the UI</li>
+      <li>Real IANA time zone resolved for every search result via <span class="mono">tz-lookup</span></li>
+      <li>Finishing onboarding saves <span class="mono">BirthData</span> to <span class="mono">localStorage</span> and redirects to the Chart page; revisiting the app later skips onboarding automatically</li>
+    </ul>
+    <div class="caught-box">
+      <h3>Caught &amp; fixed</h3>
+      <ul>
+        <li>A first attempt at the "skip onboarding if already set up" check used React's <span class="mono">useSyncExternalStore</span> — it had a genuine race condition on this Next.js canary build and incorrectly redirected back to onboarding even with saved data. Reverted to a simpler pattern, verified correct in both directions.</li>
+        <li><span class="mono">.gitignore</span>'s bare <span class="mono">.env*</span> rule was also silently excluding <span class="mono">.env.example</span>, which the spec requires to be committed — added an exception</li>
+      </ul>
+    </div>
+    <div class="commits">
+      <div class="commit"><span class="hash mono">9a9ca12</span><span class="msg">feat: add onboarding steps with Back/Next and validation</span></div>
+      <div class="commit"><span class="hash mono">0ba0ac1</span><span class="msg">feat: add place search via /api/geocode with Nominatim and attribution</span></div>
+      <div class="commit"><span class="hash mono">0517488</span><span class="msg">feat: save birth data on finish and skip onboarding when already set up</span></div>
+    </div>
+  </section>
+
+  <section class="milestone" id="detour">
+    <div class="milestone-head">
+      <span class="milestone-tag">Detour</span>
+      <h2>Saved-data view</h2>
+      <span class="status-chip extra">Unplanned, small</span>
+    </div>
+    <p class="milestone-summary">Requested between M2 and M3: a quick way to see what onboarding actually saved, ahead of the real chart math landing.</p>
+    <ul class="built-list">
+      <li>The Chart page — still a placeholder at this point — was given a plain read-out of the saved birth date, time, and place</li>
+    </ul>
+    <div class="commits">
+      <div class="commit"><span class="hash mono">bf4bf9b</span><span class="msg">feat: show saved birth data on the Chart page</span></div>
+    </div>
+  </section>
+
+  <section class="milestone" id="m3">
+    <div class="milestone-head">
+      <span class="milestone-tag">M3</span>
+      <h2>Chart</h2>
+      <span class="status-chip done">Done</span>
+    </div>
+    <p class="milestone-summary">The real natal chart: actual planet positions, houses, and aspects, computed from the saved birth data — not placeholder text.</p>
+    <ul class="built-list">
+      <li>Natal chart calculation wrapping <span class="mono">circular-natal-horoscope-js</span> — exact, approximate (window-midpoint), and unknown-time rules; ambiguous-Moon detection; aspect calculation using the spec's exact orb rules</li>
+      <li>Fixture tests against two real, birth-certificate-verified charts — Barack Obama and Princess Diana — cross-checked against Astro-Databank data</li>
+      <li>Chart page rebuilt around the real computed chart: Simple and Detailed views, "Estimated" badges, ambiguous-Moon display</li>
+    </ul>
+    <div class="caught-box">
+      <h3>Caught &amp; noteworthy</h3>
+      <ul>
+        <li><span class="mono">circular-natal-horoscope-js</span>'s license was assumed MIT going in; it's actually Unlicense (public domain) — corrected, still free</li>
+        <li>The spec called for Luxon to convert local time to UTC; the chart library already does that internally from latitude/longitude, verified correct against both fixtures to the arc-minute — so Luxon sat unused for this specific piece (kept installed for M4/M5, where it's still needed)</li>
+        <li>The ambiguous-Moon badge triggered organically during manual testing — on Obama's actual birth date, the Moon really does cross from Taurus into Gemini — rather than only in a synthetic test</li>
+      </ul>
+    </div>
+    <div class="commits">
+      <div class="commit"><span class="hash mono">b247dde</span><span class="msg">feat: compute natal charts via circular-natal-horoscope-js, verified against real fixtures</span></div>
+      <div class="commit"><span class="hash mono">91ba365</span><span class="msg">feat: show computed natal chart with simple/detailed views and estimated badges</span></div>
+    </div>
+  </section>
+
+  <section class="whats-next">
+    <h2>What's next</h2>
+    <ul class="next-list">
+      <li><span class="tag mono">M4</span><span class="name">Tasks</span><span class="desc">Add, edit, complete, delete; categories and due dates; stored in localStorage</span></li>
+      <li><span class="tag mono">M5</span><span class="name">Transits &amp; reading</span><span class="desc">Daily themes from today's transits, plus the AI-written daily reading</span></li>
+      <li><span class="tag mono">M6</span><span class="name">Ranked plan</span><span class="desc">Today's to-dos ranked by due date and the day's astrological themes</span></li>
+      <li><span class="tag mono">M7</span><span class="name">Install &amp; polish</span><span class="desc">PWA manifest, loading/empty/error states, accessibility pass</span></li>
+      <li><span class="tag mono">M8</span><span class="name">Wrap-up</span><span class="desc">End-to-end testing, README, credits</span></li>
+    </ul>
+  </section>
+
+  <footer>
+    <span>Astro Planner — local-only, $0 running cost</span>
+    <span class="mono">Generated 2026-10-26 at 07:48 EDT</span>
+  </footer>
+
+</div>

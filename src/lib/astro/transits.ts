@@ -1,6 +1,14 @@
 import { Origin, Horoscope } from "circular-natal-horoscope-js";
 import { ASPECT_ANGLES, angleDiff } from "@/lib/astro/natal";
-import type { Aspect, AspectType, NatalChart, Planet, PlanetPosition, Sign } from "@/lib/types";
+import type {
+  Aspect,
+  AspectType,
+  MoonPhase,
+  NatalChart,
+  Planet,
+  PlanetPosition,
+  Sign,
+} from "@/lib/types";
 
 const PLANET_KEYS: { key: string; planet: Planet }[] = [
   { key: "sun", planet: "Sun" },
@@ -29,8 +37,6 @@ const TRANSIT_ORBS: Record<Planet, number> = {
 };
 
 const RETROGRADE_TRACKED: Planet[] = ["Mercury", "Venus", "Mars"];
-
-export type MoonPhase = "new" | "waxing" | "full" | "waning";
 
 export interface Transits {
   date: string;

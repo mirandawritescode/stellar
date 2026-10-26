@@ -102,3 +102,12 @@ export interface Task {
   createdAt: string;
   completedAt?: string;
 }
+
+export type MoonPhase = "new" | "waxing" | "full" | "waning";
+
+export interface DayThemes {
+  date: string;
+  themes: { theme: Theme; strength: number; reasons: string[] }[];
+  caution: Theme[];
+  moonPhase: MoonPhase;
+}

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { GeocodeResult } from "@/lib/geocode";
-import { isBirthTimeComplete, isValidBirthDate } from "@/lib/onboarding";
+import { isBirthTimeComplete, isValidBirthDate, TIME_WINDOWS } from "@/lib/onboarding";
 import { saveBirthData } from "@/lib/storage/birthData";
 import type { ApproxWindow, BirthData, TimeAccuracy } from "@/lib/types";
 
@@ -12,13 +12,6 @@ const PLACE_SEARCH_DEBOUNCE_MS = 500;
 
 const MIN_DATE = "1900-01-01";
 const TODAY = new Date().toISOString().slice(0, 10);
-
-const TIME_WINDOWS: { key: ApproxWindow; label: string; range: string }[] = [
-  { key: "morning", label: "Morning", range: "06:00–12:00" },
-  { key: "afternoon", label: "Afternoon", range: "12:00–18:00" },
-  { key: "evening", label: "Evening", range: "18:00–00:00" },
-  { key: "night", label: "Night", range: "00:00–06:00" },
-];
 
 const buttonClass =
   "min-h-[44px] rounded-md border border-black/[.12] px-4 py-2 text-sm font-medium dark:border-white/[.18]";

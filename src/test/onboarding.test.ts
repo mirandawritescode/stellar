@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isValidBirthDate, isBirthTimeComplete } from "@/lib/onboarding";
+import { isValidBirthDate, isBirthTimeComplete, formatBirthTime } from "@/lib/onboarding";
 
 describe("isValidBirthDate", () => {
   const today = "2026-10-26";
@@ -48,5 +48,21 @@ describe("isBirthTimeComplete", () => {
 
   it("is always complete when unknown is chosen", () => {
     expect(isBirthTimeComplete("unknown", undefined, undefined)).toBe(true);
+  });
+});
+
+describe("formatBirthTime", () => {
+  it("formats an exact time", () => {
+    expect(formatBirthTime("exact", "14:30", undefined)).toBe("Exact: 14:30");
+  });
+
+  it("formats an approximate window with its range", () => {
+    expect(formatBirthTime("approximate", undefined, "morning")).toBe(
+      "Roughly: Morning (06:00–12:00)",
+    );
+  });
+
+  it("formats unknown", () => {
+    expect(formatBirthTime("unknown", undefined, undefined)).toBe("Unknown");
   });
 });

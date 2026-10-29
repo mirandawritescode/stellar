@@ -111,3 +111,12 @@ export interface DayThemes {
   caution: Theme[];
   moonPhase: MoonPhase;
 }
+
+export interface DailyReading {
+  date: string;
+  title: string;
+  reading: string;
+  tip: string;
+  themes: Theme[];
+  source: "ai" | "fallback";
+}

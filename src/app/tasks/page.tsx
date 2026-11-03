@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ArchGlyph from "@/components/ArchGlyph";
 import { loadTasks, saveTasks, sortTasksForDisplay } from "@/lib/storage/tasks";
 import { TASK_CATEGORY_LABELS } from "@/lib/types";
 import type { Task, TaskCategory } from "@/lib/types";
@@ -38,7 +39,7 @@ export default function TasksPage() {
 
   if (tasks === undefined) {
     return (
-      <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-4 p-6">
+      <div className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-4 p-6">
         <p className="text-muted text-sm">Loading...</p>
       </div>
     );
@@ -122,7 +123,7 @@ export default function TasksPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-4 p-6">
+    <div className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-4 p-6">
       <div className="flex items-center justify-between">
         <h1 className="heading-display text-lg">Tasks</h1>
         {form === null && (
@@ -135,7 +136,9 @@ export default function TasksPage() {
       {saveError && <p className="text-error text-sm">{saveError}</p>}
 
       {form !== null && (
-        <section className="glass-card flex flex-col gap-3 p-5">
+        <section className="arch-card flex flex-col gap-3">
+          <ArchGlyph />
+          <h2 className="heading-display text-center text-lg">{form.id === null ? "New task" : "Edit task"}</h2>
           <div className="flex flex-col gap-1">
             <label htmlFor="task-title" className="text-sm font-medium">
               Title

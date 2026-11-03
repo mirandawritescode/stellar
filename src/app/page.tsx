@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import ArchGlyph from "@/components/ArchGlyph";
 import { computeNatalChart } from "@/lib/astro/natal";
 import { computeTransits } from "@/lib/astro/transits";
 import { computeDayThemes } from "@/lib/astro/themes";
@@ -113,7 +114,7 @@ export default function TodayPage() {
 
   if (!ready || !birthData || !dayThemes || tasks === undefined) {
     return (
-      <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-4 p-6">
+      <div className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-4 p-6">
         <p className="text-muted text-sm">Loading...</p>
       </div>
     );
@@ -136,16 +137,17 @@ export default function TodayPage() {
   const everythingElse = ranked.slice(3);
 
   return (
-    <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-4 p-6">
+    <div className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-4 p-6">
       <p className="section-label">Today &middot; {dayThemes.date}</p>
 
-      <section className="glass-card flex flex-col gap-2 p-5">
-        {readingLoading && !reading && <p className="text-muted text-sm">Loading today&apos;s reading...</p>}
+      <section className="arch-card flex flex-col gap-2">
+        <ArchGlyph />
+        {readingLoading && !reading && (
+          <p className="text-muted text-center text-sm">Loading today&apos;s reading...</p>
+        )}
         {reading && (
           <>
-            <h2 className="heading-display text-xl">
-              <span className="text-accent">&#10022;</span> {reading.title}
-            </h2>
+            <h2 className="heading-display text-center text-xl">{reading.title}</h2>
             <p className="text-sm leading-relaxed">{reading.reading}</p>
             <p className="text-sm font-medium">{reading.tip}</p>
             {reading.source === "fallback" && (

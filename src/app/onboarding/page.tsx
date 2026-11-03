@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import ArchGlyph from "@/components/ArchGlyph";
 import type { GeocodeResult } from "@/lib/geocode";
 import { isBirthTimeComplete, isValidBirthDate, TIME_WINDOWS } from "@/lib/onboarding";
 import { saveBirthData } from "@/lib/storage/birthData";
@@ -99,16 +100,7 @@ export default function OnboardingPage() {
   return (
     <div className="mx-auto flex w-full max-w-[460px] flex-1 flex-col justify-center p-6">
       <div className="arch-card flex flex-col gap-6">
-        <svg className="arch-glyph" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-          <path
-            d="M28 8c-8 2-13 9-13 16s5 14 13 16c-10 1-19-6-19-16S18 7 28 8z"
-            fill="var(--accent)"
-          />
-          <path
-            d="M37 6c0 0 0.8 4.4 2.2 5.8C40.6 13.2 45 14 45 14s-4.4 0.8-5.8 2.2C37.8 17.6 37 22 37 22s-0.8-4.4-2.2-5.8C33.4 14.8 29 14 29 14s4.4-0.8 5.8-2.2C36.2 10.4 37 6 37 6z"
-            fill="var(--text-heading)"
-          />
-        </svg>
+        <ArchGlyph />
 
         <div className="flex flex-col items-center gap-1 text-center">
           <h1 className="heading-display text-xl">Let&apos;s chart your sky</h1>

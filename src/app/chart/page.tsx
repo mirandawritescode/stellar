@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import ArchGlyph from "@/components/ArchGlyph";
 import { computeNatalChart } from "@/lib/astro/natal";
 import { loadBirthData } from "@/lib/storage/birthData";
 import type { BirthData, NatalChart, PlanetPosition } from "@/lib/types";
@@ -29,7 +30,7 @@ export default function ChartPage() {
 
   if (birthData === undefined) {
     return (
-      <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-4 p-6">
+      <div className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-4 p-6">
         <h1 className="heading-display text-lg">Chart</h1>
         <p className="text-muted text-sm">Loading...</p>
       </div>
@@ -38,7 +39,7 @@ export default function ChartPage() {
 
   if (birthData === null) {
     return (
-      <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-4 p-6">
+      <div className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-4 p-6">
         <h1 className="heading-display text-lg">Chart</h1>
         <p className="text-muted text-sm">No birth details saved yet.</p>
         <Link href="/onboarding" className="text-accent text-sm font-medium underline">
@@ -53,7 +54,7 @@ export default function ChartPage() {
     chart = computeNatalChart(birthData);
   } catch {
     return (
-      <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-4 p-6">
+      <div className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-4 p-6">
         <h1 className="heading-display text-lg">Chart</h1>
         <p className="text-error text-sm">
           Something went wrong reading your chart. Try re-entering your birth details.
@@ -70,7 +71,7 @@ export default function ChartPage() {
   const housesEstimated = chart.ascendant?.estimated ?? false;
 
   return (
-    <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-4 p-6">
+    <div className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-4 p-6">
       <div className="flex items-center justify-between">
         <h1 className="heading-display text-lg">Chart</h1>
         <button type="button" onClick={() => setDetailed((d) => !d)} className="btn">
@@ -78,23 +79,24 @@ export default function ChartPage() {
         </button>
       </div>
 
-      <section className="glass-card flex flex-col gap-3 p-5">
-        <p className="text-sm">
+      <section className="arch-card flex flex-col gap-3">
+        <ArchGlyph />
+        <p className="text-center text-sm">
           Your Sun is in <strong>{sun.sign}</strong>
           {detailed && ` (${formatDegree(sun.degreeInSign)})`}.
         </p>
-        <p className="text-sm">
+        <p className="text-center text-sm">
           Your Moon is in <strong>{moonSignLabel(moon)}</strong>
           {detailed && !moon.altSign && ` (${formatDegree(moon.degreeInSign)})`}.
         </p>
         {chart.ascendant ? (
-          <p className="text-sm">
+          <p className="text-center text-sm">
             Your rising sign is <strong>{chart.ascendant.sign}</strong>
             {detailed && ` (${formatDegree(chart.ascendant.degreeInSign)})`}
             {housesEstimated && <span className={badgeClass}>Estimated</span>}.
           </p>
         ) : (
-          <p className="text-muted text-sm">Rising sign isn&apos;t shown without a known birth time.</p>
+          <p className="text-muted text-center text-sm">Rising sign isn&apos;t shown without a known birth time.</p>
         )}
       </section>
 

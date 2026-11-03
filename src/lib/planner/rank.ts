@@ -89,10 +89,15 @@ export function rankTasks(tasks: Task[], day: DayThemes, today: string): RankedT
   const ranked = open.map((task) => {
     const factors = computeFactors(task, day, today);
     const score = factors.reduce((sum, f) => sum + f.points, 0);
-    const topFactor = factors.reduce<ScoringFactor | undefined>(
-      (best, f) => (!best || f.priority < best.priority ? f : best),
-      undefined,
-    );
+    // The "strongest" factor (spec section 7) is the one worth the most
+    // points; priority only breaks an exact point tie (see the ranking
+    // logic reference doc for why: urgency reads as more concrete than
+    // astrology when neither one is clearly bigger than the other).
+    const topFactor = factors.reduce<ScoringFactor | undefined>((best, f) => {
+      if (!best) return f;
+      if (f.points !== best.points) return f.points > best.points ? f : best;
+      return f.priority < best.priority ? f : best;
+    }, undefined);
     return { task, score, reason: topFactor?.reason };
   });
 

@@ -1,16 +1,19 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { computeNatalChart } from "@/lib/astro/natal";
 import { computeTransits } from "@/lib/astro/transits";
 import { computeDayThemes } from "@/lib/astro/themes";
+import { rankTasks } from "@/lib/planner/rank";
 import { buildFallbackReading } from "@/lib/reading";
 import type { ReadingContext } from "@/lib/reading";
 import { loadBirthData } from "@/lib/storage/birthData";
 import { loadCachedReading, saveCachedReading } from "@/lib/storage/reading";
+import { loadTasks, saveTasks } from "@/lib/storage/tasks";
 import { TASK_CATEGORY_LABELS } from "@/lib/types";
-import type { BirthData, DailyReading } from "@/lib/types";
+import type { BirthData, DailyReading, Task } from "@/lib/types";
 
 function localNoonToday(): Date {
   const now = new Date();
@@ -23,6 +26,7 @@ export default function TodayPage() {
   const [ready, setReady] = useState(false);
   const [reading, setReading] = useState<DailyReading | null>(null);
   const [readingLoading, setReadingLoading] = useState(false);
+  const [tasks, setTasks] = useState<Task[] | undefined>(undefined);
 
   useEffect(() => {
     const data = loadBirthData();
@@ -38,6 +42,16 @@ export default function TodayPage() {
   const natalChart = birthData ? computeNatalChart(birthData) : null;
   const transits = natalChart ? computeTransits(natalChart, localNoonToday()) : null;
   const dayThemes = transits ? computeDayThemes(transits) : null;
+
+  useEffect(() => {
+    if (!dayThemes) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing from localStorage, a browser-only external system unavailable during SSR
+    setTasks(loadTasks(dayThemes.date));
+    // dayThemes is a new object every render; keying off the date string
+    // avoids re-running this effect (and re-reading storage) on every
+    // unrelated re-render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dayThemes?.date]);
 
   useEffect(() => {
     if (!dayThemes || !natalChart || !transits || !birthData) return;
@@ -93,7 +107,23 @@ export default function TodayPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dayThemes?.date, birthData]);
 
-  if (!ready || !birthData || !dayThemes) return null;
+  if (!ready || !birthData || !dayThemes || tasks === undefined) return null;
+
+  function handleToggleDone(task: Task) {
+    if (!tasks) return;
+    const willBeDone = !task.done;
+    const next = tasks.map((t) =>
+      t.id === task.id
+        ? { ...t, done: willBeDone, completedAt: willBeDone ? new Date().toISOString() : undefined }
+        : t,
+    );
+    saveTasks(next);
+    setTasks(next);
+  }
+
+  const ranked = rankTasks(tasks, dayThemes, dayThemes.date);
+  const bestForToday = ranked.slice(0, 3);
+  const everythingElse = ranked.slice(3);
 
   return (
     <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-4 p-6">
@@ -117,25 +147,60 @@ export default function TodayPage() {
         )}
       </section>
 
-      <section className="flex flex-col gap-2">
-        <h2 className="section-label">Today&apos;s themes</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="section-label">Best for today</h2>
+        <Link href="/tasks" className="btn">
+          Add task
+        </Link>
+      </div>
+
+      {bestForToday.length === 0 ? (
+        <p className="text-muted text-sm">No open tasks yet. Add your first one to get started.</p>
+      ) : (
         <ul className="flex flex-col gap-1">
-          {dayThemes.themes.map((t) => (
-            <li key={t.theme} className="glass-card flex items-center justify-between px-4 py-3">
-              <div>
-                <p className="text-sm font-medium">{TASK_CATEGORY_LABELS[t.theme]}</p>
-                <p className="text-muted text-xs">{t.reasons.join("; ")}</p>
+          {bestForToday.map(({ task, reason }) => (
+            <li key={task.id} className="glass-card flex items-center gap-1 px-1 py-1">
+              <label className="flex h-11 w-11 flex-shrink-0 items-center justify-center">
+                <input
+                  type="checkbox"
+                  checked={task.done}
+                  onChange={() => handleToggleDone(task)}
+                  className="h-5 w-5"
+                  aria-label={`Mark "${task.title}" done`}
+                />
+              </label>
+              <div className="min-h-[44px] flex-1 py-2">
+                <p className="text-sm font-medium">{task.title}</p>
+                <p className="text-muted text-xs">{TASK_CATEGORY_LABELS[task.category]}</p>
+                {reason && <p className="text-accent text-xs">{reason}</p>}
               </div>
-              <span className="chip">STR {String(t.strength).padStart(2, "0")}</span>
             </li>
           ))}
         </ul>
-      </section>
+      )}
 
-      {dayThemes.caution.length > 0 && (
-        <section className="flex flex-col gap-1">
-          <h2 className="section-label">Go gently on</h2>
-          <p className="text-sm">{dayThemes.caution.map((c) => TASK_CATEGORY_LABELS[c]).join(", ")}</p>
+      {everythingElse.length > 0 && (
+        <section className="flex flex-col gap-2">
+          <h2 className="section-label">Everything else</h2>
+          <ul className="flex flex-col gap-1">
+            {everythingElse.map(({ task }) => (
+              <li key={task.id} className="glass-card flex items-center gap-1 px-1 py-1">
+                <label className="flex h-11 w-11 flex-shrink-0 items-center justify-center">
+                  <input
+                    type="checkbox"
+                    checked={task.done}
+                    onChange={() => handleToggleDone(task)}
+                    className="h-5 w-5"
+                    aria-label={`Mark "${task.title}" done`}
+                  />
+                </label>
+                <div className="min-h-[44px] flex-1 py-2">
+                  <p className="text-sm">{task.title}</p>
+                  <p className="text-muted text-xs">{TASK_CATEGORY_LABELS[task.category]}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
         </section>
       )}
 

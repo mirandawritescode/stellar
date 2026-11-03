@@ -160,4 +160,20 @@ describe("rankTasks — other behavior", () => {
     expect(ranked.score).toBe(0);
     expect(ranked.reason).toBeUndefined();
   });
+
+  it("picks the reason by highest points, not by factor priority order", () => {
+    // due-soon (+2, priority 2) vs. a strength-3 theme match (+6, priority 3):
+    // the theme match is worth more, so it must win the reason even though
+    // it's a lower-priority factor type.
+    const day: DayThemes = {
+      date: TODAY,
+      themes: [{ theme: "creative", strength: 3, reasons: ["Venus trine your Moon"] }],
+      caution: [],
+      moonPhase: "waxing",
+    };
+    const t = task({ id: "a", category: "creative", dueDate: "2026-11-04" });
+    const [ranked] = rankTasks([t], day, TODAY);
+    expect(ranked.score).toBe(8); // 2 (due soon) + 6 (strength 3 x 2)
+    expect(ranked.reason).toBe("Good day for creative: Venus trine your Moon");
+  });
 });

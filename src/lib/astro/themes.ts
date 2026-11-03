@@ -38,15 +38,15 @@ function describeAspect(aspect: Aspect): string {
 class ThemeAccumulator {
   private strengths = new Map<Theme, number>();
   private reasons = new Map<Theme, string[]>();
-  private caution = new Set<Theme>();
+  private cautionReasons = new Map<Theme, string[]>();
 
   boost(theme: Theme, amount: number, reason: string): void {
     this.strengths.set(theme, (this.strengths.get(theme) ?? 0) + amount);
     this.reasons.set(theme, [...(this.reasons.get(theme) ?? []), reason]);
   }
 
-  flagCaution(theme: Theme): void {
-    this.caution.add(theme);
+  flagCaution(theme: Theme, reason: string): void {
+    this.cautionReasons.set(theme, [...(this.cautionReasons.get(theme) ?? []), reason]);
   }
 
   isEmpty(): boolean {
@@ -64,8 +64,8 @@ class ThemeAccumulator {
       .slice(0, MAX_THEMES);
   }
 
-  cautionList(): Theme[] {
-    return Array.from(this.caution);
+  cautionList(): { theme: Theme; reasons: string[] }[] {
+    return Array.from(this.cautionReasons.entries()).map(([theme, reasons]) => ({ theme, reasons }));
   }
 }
 
@@ -82,7 +82,7 @@ export function computeDayThemes(transits: Transits): DayThemes {
       const amount = aspectMultiplier(aspect);
       for (const theme of themes) acc.boost(theme, amount, `${describeAspect(aspect)} (intense)`);
     } else if (CHALLENGING.includes(aspect.type)) {
-      for (const theme of themes) acc.flagCaution(theme);
+      for (const theme of themes) acc.flagCaution(theme, describeAspect(aspect));
     }
   }
 
@@ -102,13 +102,13 @@ export function computeDayThemes(transits: Transits): DayThemes {
 
   if (transits.retrogradePlanets.includes("Mercury")) {
     acc.boost("admin", 1, "Mercury is retrograde: good for review and follow-up.");
-    acc.flagCaution("communication");
+    acc.flagCaution("communication", "Mercury is retrograde.");
   }
   if (transits.retrogradePlanets.includes("Venus")) {
-    acc.flagCaution("money");
+    acc.flagCaution("money", "Venus is retrograde.");
   }
   if (transits.retrogradePlanets.includes("Mars")) {
-    acc.flagCaution("action");
+    acc.flagCaution("action", "Mars is retrograde.");
     acc.boost("selfcare", 1, "Mars is retrograde: a good day to rest.");
   }
 

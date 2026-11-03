@@ -144,7 +144,7 @@ export default function TodayPage() {
   const ranked = rankTasks(tasks, dayThemes, dayThemes.date);
   const bestForToday = ranked.slice(0, 3);
   const remaining = ranked.slice(3);
-  const badForToday = remaining.filter((r) => dayThemes.caution.includes(r.task.category));
+  const badForToday = remaining.filter((r) => dayThemes.caution.some((c) => c.theme === r.task.category));
   const badIds = new Set(badForToday.map((r) => r.task.id));
   const everythingElse = remaining.filter((r) => !badIds.has(r.task.id));
 
@@ -190,6 +190,20 @@ export default function TodayPage() {
           ))}
         </ul>
       </section>
+
+      {dayThemes.caution.length > 0 && (
+        <section className="flex flex-col gap-2">
+          <h2 className="section-label">Go gently today</h2>
+          <ul className="flex flex-col gap-1">
+            {dayThemes.caution.map((c) => (
+              <li key={c.theme} className="glass-card px-4 py-3">
+                <p className="text-sm font-medium">{TASK_CATEGORY_LABELS[c.theme]}</p>
+                <p className="text-muted text-xs">{c.reasons.join("; ")}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <div className="flex items-center justify-between">
         <h2 className="section-label">Best for today</h2>

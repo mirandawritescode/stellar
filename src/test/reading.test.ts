@@ -8,7 +8,7 @@ const SAMPLE_THEMES: DayThemes = {
     { theme: "communication", strength: 3, reasons: ["Mercury trine your Sun"] },
     { theme: "admin", strength: 2, reasons: ["Waning moon"] },
   ],
-  caution: ["money"],
+  caution: [{ theme: "money", reasons: ["Venus is retrograde."] }],
   moonPhase: "waning",
 };
 
@@ -62,7 +62,7 @@ describe("buildReadingPrompt", () => {
     const parsed = JSON.parse(user);
     expect(parsed.natal).toEqual({ sun: "Leo", moon: "Gemini", rising: "Aquarius" });
     expect(parsed.themes).toEqual(SAMPLE_THEMES.themes);
-    expect(parsed.caution).toEqual(["money"]);
+    expect(parsed.caution).toEqual([{ theme: "money", reasons: ["Venus is retrograde."] }]);
     expect(parsed.missing).toEqual([]);
   });
 

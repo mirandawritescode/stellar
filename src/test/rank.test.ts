@@ -72,7 +72,12 @@ describe("rankTasks — factor 4: category matches a day theme", () => {
 
 describe("rankTasks — factor 5: category is in caution", () => {
   it("scores -1 but still includes the task", () => {
-    const day: DayThemes = { date: TODAY, themes: [], caution: ["social"], moonPhase: "waxing" };
+    const day: DayThemes = {
+      date: TODAY,
+      themes: [],
+      caution: [{ theme: "social", reasons: ["Venus square your Saturn"] }],
+      moonPhase: "waxing",
+    };
     const t = task({ id: "a", category: "social" });
     const [ranked] = rankTasks([t], day, TODAY);
     expect(ranked.score).toBe(-1);

@@ -71,6 +71,7 @@ All fields validate together on submit ("Reveal my chart"), showing inline error
 ### 3.4 Today (`/`, the home screen)
 - Greeting ("Hi, {name}") when a name was given, then the date and "Today's themes" list.
 - **Reading card:** title, 80–120 word reading, one practical tip. Loading skeleton while fetching.
+- **Go gently today:** as of 2026-11-03, the day's caution categories (same list used for the −1 scoring factor), each with the specific aspect or retrograde that flagged it (e.g. "Money — Venus square your Saturn; Venus is retrograde."). Hidden entirely when `caution` is empty.
 - **Best for today:** top 3 ranked tasks, each with a short reason ("Good day for calls: Mercury trine your Sun").
 - **Bad for today:** as of 2026-11-03, open tasks (ranked below the top 3) whose category is in today's caution list, each shown with the caution reason ("Go gently: try a 15-minute first step"). Hidden entirely when nothing matches.
 - **Everything else:** remaining open tasks in ranked order (excludes anything already shown in Bad for today).
@@ -162,7 +163,7 @@ type TaskCategory = Theme;   // tasks use the same vocabulary as themes
 interface DayThemes {
   date: string;                          // local date, "2026-11-03"
   themes: { theme: Theme; strength: number; reasons: string[] }[]; // strength 1–3
-  caution: Theme[];                      // themes to go gently on today
+  caution: { theme: Theme; reasons: string[] }[]; // as of 2026-11-03, with why (e.g. "Venus square your Saturn")
   moonPhase: "new" | "waxing" | "full" | "waning";
 }
 

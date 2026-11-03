@@ -76,7 +76,7 @@ function computeFactors(task: Task, day: DayThemes, today: string): ScoringFacto
     });
   }
 
-  if (day.caution.includes(task.category)) {
+  if (day.caution.some((c) => c.theme === task.category)) {
     factors.push({
       points: CAUTION_POINTS,
       priority: 4,

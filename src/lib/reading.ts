@@ -23,7 +23,7 @@ export function buildFallbackReading(dayThemes: DayThemes): DailyReading {
       ? `${topThemes[0]} and ${topThemes[1]}`
       : (topThemes[0] ?? "a bit of everything");
 
-  const cautionThemes = dayThemes.caution.slice(0, 2).map(themeLabel);
+  const cautionThemes = dayThemes.caution.slice(0, 2).map((c) => themeLabel(c.theme));
   const cautionText =
     cautionThemes.length > 0
       ? ` Go gently on ${cautionThemes.join(" and ")} today — smaller steps work better than big pushes.`

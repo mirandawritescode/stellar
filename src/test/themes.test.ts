@@ -17,6 +17,10 @@ function strengthOf(themes: { theme: Theme; strength: number }[], theme: Theme):
   return themes.find((t) => t.theme === theme)?.strength ?? 0;
 }
 
+function cautionThemes(caution: { theme: Theme }[]): Theme[] {
+  return caution.map((c) => c.theme);
+}
+
 describe("computeDayThemes — rule 1: harmonious aspect boosts its planet's themes", () => {
   it("boosts Mercury's themes by 1 on a sextile to a non-Sun/Moon natal planet", () => {
     const aspect: Aspect = { a: "Mercury", b: "Mars", type: "sextile", orb: 1 };
@@ -42,8 +46,10 @@ describe("computeDayThemes — rule 3: challenging aspect goes into caution, not
   it("adds the planet's themes to caution without boosting strength", () => {
     const aspect: Aspect = { a: "Mercury", b: "Mars", type: "square", orb: 1 };
     const result = computeDayThemes(makeTransits({ aspects: [aspect] }));
-    expect(result.caution).toContain("communication");
-    expect(result.caution).toContain("admin");
+    expect(cautionThemes(result.caution)).toContain("communication");
+    expect(cautionThemes(result.caution)).toContain("admin");
+    const communicationCaution = result.caution.find((c) => c.theme === "communication");
+    expect(communicationCaution?.reasons.some((r) => r.includes("Mercury") && r.includes("square"))).toBe(true);
     // squared to a non-Sun/Moon planet contributes no strength of its own
     const fromMoonPhaseOnly = computeDayThemes(makeTransits({}));
     expect(strengthOf(result.themes, "communication")).toBe(strengthOf(fromMoonPhaseOnly.themes, "communication"));
@@ -93,7 +99,7 @@ describe("computeDayThemes — rule 5: moon phase boosts one theme", () => {
 describe("computeDayThemes — rule 6: Mercury retrograde", () => {
   it("boosts admin and puts communication into caution", () => {
     const result = computeDayThemes(makeTransits({ retrogradePlanets: ["Mercury"] }));
-    expect(result.caution).toContain("communication");
+    expect(cautionThemes(result.caution)).toContain("communication");
     const withoutRx = computeDayThemes(makeTransits({}));
     expect(strengthOf(result.themes, "admin")).toBe(strengthOf(withoutRx.themes, "admin") + 1);
   });
@@ -102,7 +108,7 @@ describe("computeDayThemes — rule 6: Mercury retrograde", () => {
 describe("computeDayThemes — rule 7: Venus retrograde", () => {
   it("puts money into caution", () => {
     const result = computeDayThemes(makeTransits({ retrogradePlanets: ["Venus"] }));
-    expect(result.caution).toContain("money");
+    expect(cautionThemes(result.caution)).toContain("money");
   });
 });
 
@@ -112,7 +118,7 @@ describe("computeDayThemes — rule 8: Mars retrograde", () => {
     // doesn't add a 4th competing theme that could crowd selfcare out of the
     // top-3 cap (rule 10) via a strength tie.
     const result = computeDayThemes(makeTransits({ retrogradePlanets: ["Mars"], moonPhase: "new" }));
-    expect(result.caution).toContain("action");
+    expect(cautionThemes(result.caution)).toContain("action");
     const selfcare = result.themes.find((t) => t.theme === "selfcare");
     expect(selfcare?.reasons.some((r) => r.includes("retrograde"))).toBe(true);
   });

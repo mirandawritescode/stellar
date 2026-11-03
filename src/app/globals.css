@@ -210,6 +210,27 @@ body {
   font-weight: 500;
 }
 
+/* ---------- Modal ---------- */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 50;
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 460px;
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+}
+
 .text-muted {
   color: var(--text-muted);
 }

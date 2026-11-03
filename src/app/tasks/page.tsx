@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import ArchGlyph from "@/components/ArchGlyph";
+import Modal from "@/components/Modal";
 import { loadTasks, saveTasks, sortTasksForDisplay } from "@/lib/storage/tasks";
 import { TASK_CATEGORY_LABELS } from "@/lib/types";
 import type { Task, TaskCategory } from "@/lib/types";
@@ -136,68 +137,72 @@ export default function TasksPage() {
       {saveError && <p className="text-error text-sm">{saveError}</p>}
 
       {form !== null && (
-        <section className="arch-card flex flex-col gap-3">
-          <ArchGlyph />
-          <h2 className="heading-display text-center text-lg">{form.id === null ? "New task" : "Edit task"}</h2>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="task-title" className="text-sm font-medium">
-              Title
-            </label>
-            <input
-              id="task-title"
-              type="text"
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
-              maxLength={MAX_TITLE_LENGTH}
-              className={fieldClass}
-            />
-            {touched && !titleValid && (
-              <p className="text-error text-sm">Enter a title (up to {MAX_TITLE_LENGTH} characters).</p>
-            )}
-          </div>
+        <Modal onClose={closeForm}>
+          <section className="arch-card flex flex-col gap-3">
+            <ArchGlyph />
+            <h2 className="heading-display text-center text-lg">
+              {form.id === null ? "New task" : "Edit task"}
+            </h2>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="task-title" className="text-sm font-medium">
+                Title
+              </label>
+              <input
+                id="task-title"
+                type="text"
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                maxLength={MAX_TITLE_LENGTH}
+                className={fieldClass}
+              />
+              {touched && !titleValid && (
+                <p className="text-error text-sm">Enter a title (up to {MAX_TITLE_LENGTH} characters).</p>
+              )}
+            </div>
 
-          <div className="flex flex-col gap-1">
-            <label htmlFor="task-category" className="text-sm font-medium">
-              Category
-            </label>
-            <select
-              id="task-category"
-              value={form.category}
-              onChange={(e) => setForm({ ...form, category: e.target.value as TaskCategory })}
-              className={fieldClass}
-            >
-              <option value="">Choose a category</option>
-              {CATEGORIES.map((c) => (
-                <option key={c} value={c}>
-                  {TASK_CATEGORY_LABELS[c]}
-                </option>
-              ))}
-            </select>
-            {touched && !categoryValid && <p className="text-error text-sm">Choose a category.</p>}
-          </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="task-category" className="text-sm font-medium">
+                Category
+              </label>
+              <select
+                id="task-category"
+                value={form.category}
+                onChange={(e) => setForm({ ...form, category: e.target.value as TaskCategory })}
+                className={fieldClass}
+              >
+                <option value="">Choose a category</option>
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c}>
+                    {TASK_CATEGORY_LABELS[c]}
+                  </option>
+                ))}
+              </select>
+              {touched && !categoryValid && <p className="text-error text-sm">Choose a category.</p>}
+            </div>
 
-          <div className="flex flex-col gap-1">
-            <label htmlFor="task-due" className="text-sm font-medium">
-              Due date (optional)
-            </label>
-            <input
-              id="task-due"
-              type="date"
-              value={form.dueDate}
-              onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
-              className={fieldClass}
-            />
-          </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="task-due" className="text-sm font-medium">
+                Due date (optional)
+              </label>
+              <input
+                id="task-due"
+                type="date"
+                value={form.dueDate}
+                onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
+                className={fieldClass}
+              />
+            </div>
 
-          <div className="flex justify-end gap-2">
-            <button type="button" onClick={closeForm} className={buttonClass}>
-              Cancel
-            </button>
-            <button type="button" onClick={handleSubmit} className={`${buttonClass} btn-primary`}>
-              {form.id === null ? "Add" : "Save"}
-            </button>
-          </div>
-        </section>
+            <div className="flex justify-end gap-2">
+              <button type="button" onClick={closeForm} className={buttonClass}>
+                Cancel
+              </button>
+              <button type="button" onClick={handleSubmit} className={`${buttonClass} btn-primary`}>
+                {form.id === null ? "Add" : "Save"}
+              </button>
+            </div>
+          </section>
+        </Modal>
       )}
 
       {ordered.length === 0 ? (

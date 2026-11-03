@@ -137,6 +137,79 @@ body {
   color: var(--text-muted);
 }
 
+/* ---------- Onboarding (single-page, arched card) ---------- */
+
+.arch-card {
+  position: relative;
+  background: var(--card-bg);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  border-radius: 180px 180px 20px 20px;
+  padding: 72px 2rem 2rem;
+}
+
+.arch-glyph {
+  position: absolute;
+  top: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 48px;
+  filter: drop-shadow(0 0 10px var(--accent-glow));
+}
+
+.field-group {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--card-border);
+}
+
+.field-group:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
+.window-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+}
+
+.window-pill {
+  flex: 1 1 auto;
+  min-width: 72px;
+  min-height: 32px;
+  padding: 0 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.window-pill.selected {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.window-range {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.window-range strong {
+  color: var(--accent);
+  font-weight: 500;
+}
+
 .text-muted {
   color: var(--text-muted);
 }

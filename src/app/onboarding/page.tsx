@@ -13,11 +13,8 @@ const PLACE_SEARCH_DEBOUNCE_MS = 500;
 const MIN_DATE = "1900-01-01";
 const TODAY = new Date().toISOString().slice(0, 10);
 
-const buttonClass = "btn";
-
 export default function OnboardingPage() {
   const router = useRouter();
-  const [step, setStep] = useState(0);
   const [touched, setTouched] = useState(false);
 
   const [date, setDate] = useState("");
@@ -46,6 +43,8 @@ export default function OnboardingPage() {
     !visibleSearchError &&
     searchedQuery === trimmedQuery &&
     visibleResults.length === 0;
+  const selectedWindow = TIME_WINDOWS.find((w) => w.key === approxWindow);
+  const isComplete = dateValid && timeValid && selectedPlace !== null;
 
   useEffect(() => {
     const query = placeQuery.trim();
@@ -80,22 +79,8 @@ export default function OnboardingPage() {
     };
   }, [placeQuery]);
 
-  function goNext() {
+  function handleSubmit() {
     setTouched(true);
-    if (step === 0 && !dateValid) return;
-    if (step === 1 && !timeValid) return;
-    setTouched(false);
-    setStep((s) => Math.min(s + 1, 2));
-  }
-
-  function goBack() {
-    setTouched(false);
-    setStep((s) => Math.max(s - 1, 0));
-  }
-
-  const isComplete = dateValid && timeValid && selectedPlace !== null;
-
-  function handleFinish() {
     if (!isComplete || !selectedPlace) return;
 
     const birthData: BirthData = {
@@ -112,10 +97,26 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-6 p-6">
-      {step === 0 && (
-        <section className="flex flex-col gap-2">
-          <label htmlFor="birth-date" className="heading-display text-lg">
+    <div className="mx-auto flex w-full max-w-[460px] flex-1 flex-col justify-center p-6">
+      <div className="arch-card flex flex-col gap-6">
+        <svg className="arch-glyph" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path
+            d="M28 8c-8 2-13 9-13 16s5 14 13 16c-10 1-19-6-19-16S18 7 28 8z"
+            fill="var(--accent)"
+          />
+          <path
+            d="M37 6c0 0 0.8 4.4 2.2 5.8C40.6 13.2 45 14 45 14s-4.4 0.8-5.8 2.2C37.8 17.6 37 22 37 22s-0.8-4.4-2.2-5.8C33.4 14.8 29 14 29 14s4.4-0.8 5.8-2.2C36.2 10.4 37 6 37 6z"
+            fill="var(--text-heading)"
+          />
+        </svg>
+
+        <div className="flex flex-col items-center gap-1 text-center">
+          <h1 className="heading-display text-xl">Let&apos;s chart your sky</h1>
+          <p className="text-muted text-sm">Three quick things, then we&apos;ll read your chart.</p>
+        </div>
+
+        <div className="field-group flex flex-col gap-2">
+          <label htmlFor="birth-date" className="section-label">
             Birth date
           </label>
           <input
@@ -130,13 +131,11 @@ export default function OnboardingPage() {
           {touched && !dateValid && (
             <p className="text-error text-sm">Enter a date between Jan 1, 1900 and today.</p>
           )}
-        </section>
-      )}
+        </div>
 
-      {step === 1 && (
-        <section className="flex flex-col gap-3">
-          <h2 className="heading-display text-lg">Birth time</h2>
-          <p className="text-muted text-sm">Your birth certificate usually has it.</p>
+        <div className="field-group flex flex-col gap-2">
+          <label className="section-label">Birth time</label>
+          <p className="text-muted text-xs">Your birth certificate usually has it.</p>
           <fieldset className="flex flex-col gap-2">
             <legend className="sr-only">Birth time accuracy</legend>
             <label className="flex items-center gap-2 text-sm">
@@ -153,7 +152,7 @@ export default function OnboardingPage() {
                 type="time"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="field"
+                className="field ml-7 max-w-[160px]"
               />
             )}
 
@@ -167,19 +166,26 @@ export default function OnboardingPage() {
               Roughly
             </label>
             {timeAccuracy === "approximate" && (
-              <div className="flex flex-wrap gap-2">
-                {TIME_WINDOWS.map((w) => (
-                  <button
-                    key={w.key}
-                    type="button"
-                    onClick={() => setApproxWindow(w.key)}
-                    aria-pressed={approxWindow === w.key}
-                    className={`${buttonClass} ${approxWindow === w.key ? "btn-primary" : ""}`}
-                  >
-                    {w.label} ({w.range})
-                  </button>
-                ))}
-              </div>
+              <>
+                <div className="window-picker">
+                  {TIME_WINDOWS.map((w) => (
+                    <button
+                      key={w.key}
+                      type="button"
+                      onClick={() => setApproxWindow(w.key)}
+                      aria-pressed={approxWindow === w.key}
+                      className={`window-pill ${approxWindow === w.key ? "selected" : ""}`}
+                    >
+                      {w.label}
+                    </button>
+                  ))}
+                </div>
+                {selectedWindow && (
+                  <p className="window-range">
+                    <strong>{selectedWindow.label}</strong> &middot; {selectedWindow.range}
+                  </p>
+                )}
+              </>
             )}
 
             <label className="flex items-center gap-2 text-sm">
@@ -191,6 +197,11 @@ export default function OnboardingPage() {
               />
               I don&apos;t know
             </label>
+            {timeAccuracy === "unknown" && (
+              <p className="text-muted ml-7 text-xs italic">
+                No worries &mdash; we&apos;ll skip your rising sign and houses, and say so.
+              </p>
+            )}
           </fieldset>
           {touched && !timeValid && (
             <p className="text-error text-sm">
@@ -199,12 +210,10 @@ export default function OnboardingPage() {
                 : "Pick a window, or choose a different option."}
             </p>
           )}
-        </section>
-      )}
+        </div>
 
-      {step === 2 && (
-        <section className="flex flex-col gap-2">
-          <label htmlFor="birth-place" className="heading-display text-lg">
+        <div className="field-group flex flex-col gap-2">
+          <label htmlFor="birth-place" className="section-label">
             Birth place
           </label>
 
@@ -257,27 +266,12 @@ export default function OnboardingPage() {
           )}
 
           <p className="text-muted text-xs">Search results © OpenStreetMap contributors</p>
-        </section>
-      )}
+          {touched && !selectedPlace && <p className="text-error text-sm">Choose a place from the list.</p>}
+        </div>
 
-      <div className="mt-auto flex justify-between">
-        <button type="button" onClick={goBack} disabled={step === 0} className={buttonClass}>
-          Back
+        <button type="button" onClick={handleSubmit} className="btn btn-primary">
+          Reveal my chart
         </button>
-        {step < 2 ? (
-          <button type="button" onClick={goNext} className={`${buttonClass} btn-primary`}>
-            Next
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={handleFinish}
-            disabled={!isComplete}
-            className={`${buttonClass} btn-primary`}
-          >
-            Finish
-          </button>
-        )}
       </div>
     </div>
   );

@@ -50,15 +50,15 @@ See section 14 (v2 backlog).
 - Shown only when no birth data is saved; otherwise redirect to `/`.
 
 ### 3.2 Onboarding (`/onboarding`)
-One question per step, with Back and Next.
+As of 2026-11-03, a single page, not a step wizard: all three questions on one centered, arched card (a moon-and-sparkle glyph, "Let's chart your sky"), submitted together with one button rather than Back/Next.
 
-| Step | Input | Rules |
+| Field | Input | Rules |
 | --- | --- | --- |
 | Birth date | Date picker | Required; between 1900-01-01 and today |
-| Birth time | Choice: **Exact time** (time picker) · **Roughly** (morning 06–12, afternoon 12–18, evening 18–24, night 00–06) · **I don't know** | Required choice; helper text: "Your birth certificate usually has it" |
+| Birth time | Choice: **Exact time** (time picker) · **Roughly** (a pill picker: morning 06–12, afternoon 12–18, evening 18–24, night 00–06) · **I don't know** | Required choice; helper text: "Your birth certificate usually has it"; picking "I don't know" shows a short note that houses/rising sign will be skipped |
 | Birth place | Search box → results list from `/api/geocode` | Required; debounce 500 ms; show "Search results © OpenStreetMap contributors" |
 
-On finish: save `BirthData`, compute and save the chart, go to `/chart?first=1`.
+All fields validate together on submit ("Reveal my chart"), showing inline errors for whichever are incomplete — there's no per-step gate. On submit: save `BirthData`, compute and save the chart, go to `/chart?first=1`.
 
 ### 3.3 Chart (`/chart`)
 - **Simple view (default):** Sun, Moon and rising sign (if known) with one friendly sentence each, then the other planets as a list: planet, sign, and house (if known).

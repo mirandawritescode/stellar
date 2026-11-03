@@ -330,9 +330,12 @@ Deferred along with mobile support generally (see section 11 and section 14) —
 ## 11. Design
 
 - **Desktop-first for now.** Single column, max content width 720px, centered. Mobile-first responsive design (small-screen layout, touch tap-target sizing) is deferred to a later pass — see section 14.
-- Design tokens in Tailwind config: colors [placeholder: deep indigo background, warm gold accent, soft off-white text], font pair [placeholder: a serif for headings, a clean sans for body]. Mira will replace these.
-- Support light and dark mode via `prefers-color-scheme`.
-- Contrast at least WCAG AA; visible focus states; respects reduced motion.
+- **"Night" and "Day," not generic light/dark.** Mapped to `prefers-color-scheme` (dark → Night, light → Day), no manual toggle:
+  - **Night**: deep indigo-violet gradient background (`#100d20` → `#1a1434` → `#231a40`), a twinkling star field, periwinkle/lavender glow accent (`#c9b8ff`).
+  - **Day**: sunrise gradient background (`#f1e3ee` → `#fbdccb` → `#ffd9a0`), slowly drifting clouds instead of stars, warm gold/coral glow accent (`#d98a4f`).
+  - Both: frosted-glass cards (`backdrop-filter: blur`), a faint scanline texture, individually-animated star/cloud elements (staggered `animation-delay`, not synchronized) — all defined as CSS custom properties in `src/app/globals.css`, consumed by shared primitives (`.glass-card`, `.chip`, `.btn`, `.field`, `.nav-link`) rather than one-off styling per screen.
+- **Typography**: Cormorant Garamond (italic, 500/600 weight) for headings; Inter for body text; IBM Plex Mono for small data readouts (theme strength badges, planet positions, aspect orbs). Loaded via `next/font/google`.
+- Contrast at least WCAG AA; visible focus states; both animations disabled under `prefers-reduced-motion: reduce`.
 - Tone of UI copy: friendly, short, never preachy.
 
 ---
@@ -416,5 +419,5 @@ Work in this order. Each milestone ends with `npm run check` passing and a local
 | Reading tone | [warm and practical, lightly mystical] |
 | Astrology system | [Western tropical] |
 | House system | [Placidus] |
-| Colors and fonts | [placeholders in section 11] |
+| Colors and fonts | Decided — Night/Day theme, see section 11 |
 | Chart library license | Must be confirmed before launch |

@@ -10,6 +10,7 @@ export interface BirthPlace {
 
 export interface BirthData {
   version: 1;
+  name?: string;
   date: string;
   timeAccuracy: TimeAccuracy;
   time?: string;

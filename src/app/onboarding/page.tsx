@@ -8,6 +8,7 @@ import { isBirthTimeComplete, isValidBirthDate, TIME_WINDOWS } from "@/lib/onboa
 import { saveBirthData } from "@/lib/storage/birthData";
 import type { ApproxWindow, BirthData, TimeAccuracy } from "@/lib/types";
 
+const MAX_NAME_LENGTH = 60;
 const MIN_PLACE_QUERY_LENGTH = 3;
 const PLACE_SEARCH_DEBOUNCE_MS = 500;
 
@@ -18,6 +19,7 @@ export default function OnboardingPage() {
   const router = useRouter();
   const [touched, setTouched] = useState(false);
 
+  const [name, setName] = useState("");
   const [date, setDate] = useState("");
   const [timeAccuracy, setTimeAccuracy] = useState<TimeAccuracy>("unknown");
   const [time, setTime] = useState("");
@@ -86,6 +88,7 @@ export default function OnboardingPage() {
 
     const birthData: BirthData = {
       version: 1,
+      ...(name.trim() ? { name: name.trim() } : {}),
       date,
       timeAccuracy,
       ...(timeAccuracy === "exact" ? { time } : {}),
@@ -105,6 +108,21 @@ export default function OnboardingPage() {
         <div className="flex flex-col items-center gap-1 text-center">
           <h1 className="heading-display text-xl">Let&apos;s chart your sky</h1>
           <p className="text-muted text-sm">Three quick things, then we&apos;ll read your chart.</p>
+        </div>
+
+        <div className="field-group flex flex-col gap-2">
+          <label htmlFor="birth-name" className="section-label">
+            Name (optional)
+          </label>
+          <input
+            id="birth-name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            maxLength={MAX_NAME_LENGTH}
+            placeholder="What should we call you?"
+            className="field"
+          />
         </div>
 
         <div className="field-group flex flex-col gap-2">

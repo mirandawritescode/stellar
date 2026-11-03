@@ -54,6 +54,7 @@ As of 2026-11-03, a single page, not a step wizard: all three questions on one c
 
 | Field | Input | Rules |
 | --- | --- | --- |
+| Name | Text | Optional; shown as a "Hi, {name}" greeting on Today. Local only — never sent to Groq (rule 6) |
 | Birth date | Date picker | Required; between 1900-01-01 and today |
 | Birth time | Choice: **Exact time** (time picker) · **Roughly** (a pill picker: morning 06–12, afternoon 12–18, evening 18–24, night 00–06) · **I don't know** | Required choice; helper text: "Your birth certificate usually has it"; picking "I don't know" shows a short note that houses/rising sign will be skipped |
 | Birth place | Search box → results list from `/api/geocode` | Required; debounce 500 ms; show "Search results © OpenStreetMap contributors" |
@@ -107,6 +108,7 @@ interface BirthPlace {
 
 interface BirthData {
   version: 1;
+  name?: string;             // optional, local display only — never sent to Groq
   date: string;              // "1990-06-15"
   timeAccuracy: TimeAccuracy;
   time?: string;             // "14:30", only when exact

@@ -155,6 +155,7 @@ export default function TodayPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-4 p-6">
+      {birthData.name && <h1 className="heading-display text-xl">Hi, {birthData.name}</h1>}
       <p className="section-label">Today &middot; {dayThemes.date}</p>
 
       {saveError && <p className="text-error text-sm">{saveError}</p>}

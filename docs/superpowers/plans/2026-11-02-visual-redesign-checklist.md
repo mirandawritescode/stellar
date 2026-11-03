@@ -18,8 +18,8 @@ Not a spec milestone — a cross-cutting visual pass over the five screens alrea
 ## Build steps
 
 - [x] **Fonts & tokens** — load Cormorant Garamond, Inter, and IBM Plex Mono via `next/font/google` (self-hosted at build time, not a runtime `<link>` tag). Set up the Night/Day CSS custom properties (background, card, border, text, muted text, accent) in `globals.css`, switched via `prefers-color-scheme`. Verified live: both gradients render correctly, fonts confirmed loaded via computed styles.
-- [ ] **Shared visual primitives** — reusable styles/classes for the glass card, section label, theme/strength chip, and nav bar treatment, so each page isn't duplicating the same CSS.
-- [ ] **Background effects** — a `Starfield`/`Sky` component (twinkling stars for Night, drifting clouds for Day) rendered once at the layout level, behind everything; respects `prefers-reduced-motion`.
-- [ ] **Apply to every screen** — Today, the three onboarding steps, Chart (Simple + Detailed), Tasks (list + form), Settings, and `BottomNav`.
-- [ ] **Update the spec** — replace `docs/spec.md` section 11's placeholder design-token note with the actual decided system above.
-- [ ] **Verify** — `npm run check` passes; manually check both themes (OS color-scheme toggle) across all five screens; confirm `prefers-reduced-motion` actually disables the animations; commit.
+- [x] **Shared visual primitives** — `.glass-card`, `.section-label`, `.chip`, `.btn`/`.btn-primary`, `.field`, `.nav-link`, `.heading-display`, `.text-muted`/`.text-accent`/`.text-error`, plus `accent-color` tinting on native checkboxes/radios — all added to `globals.css`, consuming the CSS custom properties.
+- [x] **Background effects** — `src/components/Sky.tsx`: both star and cloud element sets always render in the DOM (pure CSS, via `display: none`/`block` under `prefers-color-scheme`) so there's no client-side flash or hydration mismatch; mounted once in the root layout behind everything. Respects `prefers-reduced-motion` (verified by code review — the testing tool doesn't support emulating that media feature, so this wasn't exercised live).
+- [x] **Apply to every screen** — Today, onboarding (all 3 steps), Chart (Simple + Detailed), Tasks (list + form), Settings, and `BottomNav`.
+- [x] **Update the spec** — `docs/spec.md` section 11 and the section 15 open-decisions table now describe the real decided system instead of placeholders.
+- [x] **Verify** — `npm run check` passes (95 tests); manually checked both themes across all five screens live in the browser, including the real AI reading, nav bar active state, checkbox accent tinting, and Chart's Detailed view/aspects table; commits made per logical step throughout.

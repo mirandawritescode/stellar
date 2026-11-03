@@ -17,7 +17,7 @@ Not a spec milestone — a cross-cutting visual pass over the five screens alrea
 
 ## Build steps
 
-- [ ] **Fonts & tokens** — load Cormorant Garamond, Inter, and IBM Plex Mono via `next/font/google` (self-hosted at build time, not a runtime `<link>` tag). Set up the Night/Day CSS custom properties (background, card, border, text, muted text, accent) in `globals.css`, switched via `prefers-color-scheme`.
+- [x] **Fonts & tokens** — load Cormorant Garamond, Inter, and IBM Plex Mono via `next/font/google` (self-hosted at build time, not a runtime `<link>` tag). Set up the Night/Day CSS custom properties (background, card, border, text, muted text, accent) in `globals.css`, switched via `prefers-color-scheme`. Verified live: both gradients render correctly, fonts confirmed loaded via computed styles.
 - [ ] **Shared visual primitives** — reusable styles/classes for the glass card, section label, theme/strength chip, and nav bar treatment, so each page isn't duplicating the same CSS.
 - [ ] **Background effects** — a `Starfield`/`Sky` component (twinkling stars for Night, drifting clouds for Day) rendered once at the layout level, behind everything; respects `prefers-reduced-motion`.
 - [ ] **Apply to every screen** — Today, the three onboarding steps, Chart (Simple + Detailed), Tasks (list + form), Settings, and `BottomNav`.

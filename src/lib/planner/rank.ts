@@ -1,10 +1,17 @@
 import { TASK_CATEGORY_LABELS } from "@/lib/types";
 import type { DayThemes, Task } from "@/lib/types";
 
+export interface ScoreFactor {
+  points: number;
+  reason: string;
+}
+
 export interface RankedTask {
   task: Task;
   score: number;
   reason?: string;
+  /** Every factor that contributed to the score, strongest first — for a full breakdown (e.g. a hover tooltip), unlike `reason` this isn't limited to the top 3 ranked tasks. */
+  factors: ScoreFactor[];
 }
 
 interface ScoringFactor {
@@ -18,6 +25,7 @@ const DUE_TODAY_POINTS = 4;
 const DUE_SOON_POINTS = 2;
 const DUE_SOON_WINDOW_DAYS = 3;
 const CAUTION_POINTS = -1;
+export const CAUTION_REASON = "Go gently: try a 15-minute first step";
 const STALE_POINTS = 1;
 const STALE_THRESHOLD_DAYS = 7;
 const THEME_MATCH_MULTIPLIER = 2;
@@ -72,7 +80,7 @@ function computeFactors(task: Task, day: DayThemes, today: string): ScoringFacto
     factors.push({
       points: CAUTION_POINTS,
       priority: 4,
-      reason: "Go gently: try a 15-minute first step",
+      reason: CAUTION_REASON,
     });
   }
 
@@ -98,7 +106,10 @@ export function rankTasks(tasks: Task[], day: DayThemes, today: string): RankedT
       if (f.points !== best.points) return f.points > best.points ? f : best;
       return f.priority < best.priority ? f : best;
     }, undefined);
-    return { task, score, reason: topFactor?.reason };
+    const sortedFactors = [...factors]
+      .sort((a, b) => b.points - a.points)
+      .map(({ points, reason }) => ({ points, reason }));
+    return { task, score, reason: topFactor?.reason, factors: sortedFactors };
   });
 
   ranked.sort((a, b) => {
@@ -113,5 +124,5 @@ export function rankTasks(tasks: Task[], day: DayThemes, today: string): RankedT
     return a.task.createdAt < b.task.createdAt ? -1 : a.task.createdAt > b.task.createdAt ? 1 : 0;
   });
 
-  return ranked.map((r, i) => (i < 3 ? r : { task: r.task, score: r.score, reason: undefined }));
+  return ranked.map((r, i) => (i < 3 ? r : { task: r.task, score: r.score, reason: undefined, factors: r.factors }));
 }

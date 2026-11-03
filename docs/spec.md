@@ -69,11 +69,13 @@ All fields validate together on submit ("Reveal my chart"), showing inline error
 - Link: "Add or fix birth details" → onboarding with values prefilled.
 
 ### 3.4 Today (`/`, the home screen)
-- Date and a one-line "Today's themes" summary (e.g., "Communication and tidy-up day").
+- Greeting ("Hi, {name}") when a name was given, then the date and "Today's themes" list.
 - **Reading card:** title, 80–120 word reading, one practical tip. Loading skeleton while fetching.
 - **Best for today:** top 3 ranked tasks, each with a short reason ("Good day for calls: Mercury trine your Sun").
-- **Everything else:** remaining open tasks in ranked order.
-- Check off tasks inline; "Add task" button opens the add form.
+- **Bad for today:** as of 2026-11-03, open tasks (ranked below the top 3) whose category is in today's caution list, each shown with the caution reason ("Go gently: try a 15-minute first step"). Hidden entirely when nothing matches.
+- **Everything else:** remaining open tasks in ranked order (excludes anything already shown in Bad for today).
+- Every task's points chip (`PointsChip` component) shows a hover/focus breakdown of every scoring factor that contributed to its score, not just the single top reason — backed by `RankedTask.factors` in `src/lib/planner/rank.ts`.
+- Check off tasks inline; "Add task" button opens the add form as a modal (same `TaskFormModal` Tasks uses).
 - Error and limit states in section 8.4.
 
 ### 3.5 Tasks (`/tasks`)

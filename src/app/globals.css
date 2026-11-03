@@ -15,6 +15,7 @@
   --accent-border: rgba(180, 110, 70, 0.3);
   --nav-bg: rgba(255, 245, 235, 0.55);
   --nav-border: rgba(180, 110, 70, 0.18);
+  --popover-bg: rgba(255, 250, 245, 0.97);
   --sky-particle: rgba(255, 255, 255, 0.75);
   --scanline: rgba(120, 70, 40, 0.025);
   --error: #c4425c;
@@ -45,6 +46,7 @@
     --accent-border: rgba(201, 184, 255, 0.3);
     --nav-bg: rgba(16, 13, 32, 0.75);
     --nav-border: rgba(201, 184, 255, 0.18);
+    --popover-bg: rgba(20, 16, 38, 0.97);
     --sky-particle: #ffffff;
     --scanline: rgba(255, 255, 255, 0.025);
     --error: #f0829b;
@@ -94,6 +96,15 @@ body {
   border-radius: 999px;
   padding: 0.1875rem 0.5625rem;
   white-space: nowrap;
+}
+
+.pts-popover {
+  background: var(--popover-bg);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  border-radius: 10px;
+  padding: 0.5rem 0.625rem;
 }
 
 .btn {

@@ -176,4 +176,37 @@ describe("rankTasks — other behavior", () => {
     expect(ranked.score).toBe(8); // 2 (due soon) + 6 (strength 3 x 2)
     expect(ranked.reason).toBe("Good day for creative: Venus trine your Moon");
   });
+
+  it("exposes every scoring factor, strongest first, for the full breakdown", () => {
+    const day: DayThemes = {
+      date: TODAY,
+      themes: [{ theme: "communication", strength: 2, reasons: ["Mercury trine your Sun"] }],
+      caution: [],
+      moonPhase: "waxing",
+    };
+    const t = task({
+      id: "a",
+      category: "communication",
+      dueDate: TODAY,
+      createdAt: "2026-10-20T00:00:00.000Z", // stale
+    });
+    const [ranked] = rankTasks([t], day, TODAY);
+    expect(ranked.factors).toEqual([
+      { points: 4, reason: "Due today" },
+      { points: 4, reason: "Good day for calls & messages: Mercury trine your Sun" },
+      { points: 1, reason: "It's been sitting a while" },
+    ]);
+  });
+
+  it("still exposes factors for a task beyond the top 3, even though reason is hidden", () => {
+    const tasks = [
+      task({ id: "1", dueDate: "2026-10-25" }),
+      task({ id: "2", dueDate: "2026-10-26" }),
+      task({ id: "3", dueDate: "2026-10-27" }),
+      task({ id: "4", dueDate: "2026-10-28" }),
+    ];
+    const ranked = rankTasks(tasks, EMPTY_THEMES, TODAY);
+    expect(ranked[3].reason).toBeUndefined();
+    expect(ranked[3].factors).toEqual([{ points: 5, reason: "Overdue since Wed" }]);
+  });
 });

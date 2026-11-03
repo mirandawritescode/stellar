@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ArchGlyph from "@/components/ArchGlyph";
+import PointsChip from "@/components/PointsChip";
 import TaskFormModal from "@/components/TaskFormModal";
 import { computeNatalChart } from "@/lib/astro/natal";
 import { computeTransits } from "@/lib/astro/transits";
 import { computeDayThemes } from "@/lib/astro/themes";
-import { rankTasks } from "@/lib/planner/rank";
+import { CAUTION_REASON, rankTasks } from "@/lib/planner/rank";
 import { buildFallbackReading } from "@/lib/reading";
 import type { ReadingContext } from "@/lib/reading";
 import { loadBirthData } from "@/lib/storage/birthData";
@@ -19,10 +20,6 @@ import type { BirthData, DailyReading, Task } from "@/lib/types";
 function localNoonToday(): Date {
   const now = new Date();
   return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0);
-}
-
-function formatPoints(score: number): string {
-  return score > 0 ? `+${score}` : String(score);
 }
 
 export default function TodayPage() {
@@ -151,7 +148,10 @@ export default function TodayPage() {
 
   const ranked = rankTasks(tasks, dayThemes, dayThemes.date);
   const bestForToday = ranked.slice(0, 3);
-  const everythingElse = ranked.slice(3);
+  const remaining = ranked.slice(3);
+  const badForToday = remaining.filter((r) => dayThemes.caution.includes(r.task.category));
+  const badIds = new Set(badForToday.map((r) => r.task.id));
+  const everythingElse = remaining.filter((r) => !badIds.has(r.task.id));
 
   return (
     <div className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-4 p-6">
@@ -207,7 +207,7 @@ export default function TodayPage() {
         <p className="text-muted text-sm">No open tasks yet. Add your first one to get started.</p>
       ) : (
         <ul className="flex flex-col gap-1">
-          {bestForToday.map(({ task, score, reason }) => (
+          {bestForToday.map(({ task, score, reason, factors }) => (
             <li key={task.id} className="glass-card flex items-center gap-1 px-1 py-1">
               <label className="flex h-11 w-11 flex-shrink-0 items-center justify-center">
                 <input
@@ -223,17 +223,44 @@ export default function TodayPage() {
                 <p className="text-muted text-xs">{TASK_CATEGORY_LABELS[task.category]}</p>
                 {reason && <p className="text-accent text-xs">{reason}</p>}
               </div>
-              <span className="chip mr-2">PTS {formatPoints(score)}</span>
+              <PointsChip score={score} factors={factors} />
             </li>
           ))}
         </ul>
+      )}
+
+      {badForToday.length > 0 && (
+        <section className="flex flex-col gap-2">
+          <h2 className="section-label">Bad for today</h2>
+          <ul className="flex flex-col gap-1">
+            {badForToday.map(({ task, score, factors }) => (
+              <li key={task.id} className="glass-card flex items-center gap-1 px-1 py-1">
+                <label className="flex h-11 w-11 flex-shrink-0 items-center justify-center">
+                  <input
+                    type="checkbox"
+                    checked={task.done}
+                    onChange={() => handleToggleDone(task)}
+                    className="h-5 w-5"
+                    aria-label={`Mark "${task.title}" done`}
+                  />
+                </label>
+                <div className="min-h-[44px] flex-1 py-2">
+                  <p className="text-sm font-medium">{task.title}</p>
+                  <p className="text-muted text-xs">{TASK_CATEGORY_LABELS[task.category]}</p>
+                  <p className="text-muted text-xs italic">{CAUTION_REASON}</p>
+                </div>
+                <PointsChip score={score} factors={factors} />
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
 
       {everythingElse.length > 0 && (
         <section className="flex flex-col gap-2">
           <h2 className="section-label">Everything else</h2>
           <ul className="flex flex-col gap-1">
-            {everythingElse.map(({ task, score }) => (
+            {everythingElse.map(({ task, score, factors }) => (
               <li key={task.id} className="glass-card flex items-center gap-1 px-1 py-1">
                 <label className="flex h-11 w-11 flex-shrink-0 items-center justify-center">
                   <input
@@ -248,7 +275,7 @@ export default function TodayPage() {
                   <p className="text-sm">{task.title}</p>
                   <p className="text-muted text-xs">{TASK_CATEGORY_LABELS[task.category]}</p>
                 </div>
-                <span className="chip mr-2">PTS {formatPoints(score)}</span>
+                <PointsChip score={score} factors={factors} />
               </li>
             ))}
           </ul>

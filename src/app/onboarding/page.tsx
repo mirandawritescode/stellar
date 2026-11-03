@@ -191,7 +191,8 @@ export default function OnboardingPage() {
             </label>
             {timeAccuracy === "unknown" && (
               <p className="text-muted ml-7 text-xs italic">
-                No worries &mdash; we&apos;ll skip your rising sign and houses, and say so.
+                No worries &mdash; we&apos;ll skip your rising sign and houses for now. You can always add your
+                birth time later.
               </p>
             )}
           </fieldset>

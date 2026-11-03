@@ -17,7 +17,7 @@ Each morning the user opens the app and sees:
 They set up their birth details once. Everything is stored in their browser; there are no accounts.
 
 ### v1 goals
-- Works well on a desktop browser. Mobile/iPhone support (including Home Screen install) is deferred — see section 11.
+- Desktop-first, and responsive down to phone widths so nothing breaks or overflows there. A dedicated mobile-first redesign (its own small-screen layout/UX) and iPhone Home Screen install testing are deferred — see section 11.
 - Accurate chart math, honest about missing birth details.
 - Runs locally with a portfolio-quality README; hosting comes later.
 
@@ -319,17 +319,15 @@ Write the tests first: one test per factor, plus ties and an empty list.
 
 ## 10. Installable web app (PWA)
 
-Deferred along with mobile support generally (see section 11 and section 14) — not part of the M7 work until mobile is revisited.
+Built in M7: manifest and icons via Next.js's own file conventions (`src/app/manifest.ts`, generated `icon.tsx`/`apple-icon.tsx`/192px+512px icons), so "Add to Home Screen" is ready. Actual Home Screen testing on an iPhone waits until the app is hosted somewhere a phone can reach — see section 11.
 
-- `public/manifest.webmanifest`: name, short name, `display: "standalone"`, theme and background colors, icons 192px and 512px plus an Apple touch icon.
-- iOS meta tags for standalone mode and status bar.
 - A minimal service worker is optional in v1; if added, cache only the app shell, never API responses.
 
 ---
 
 ## 11. Design
 
-- **Desktop-first for now.** Single column, max content width 720px, centered. Mobile-first responsive design (small-screen layout, touch tap-target sizing) is deferred to a later pass — see section 14.
+- **Desktop-first, responsive down to phone widths.** Single column, max content width 720px, centered; the same layout reflows to fit narrow screens without overflowing or breaking (verified down to 320px). A dedicated mobile-first redesign — its own small-screen layout/UX, not just "doesn't break" — is deferred to a later pass; see section 14.
 - **"Night" and "Day," not generic light/dark.** Mapped to `prefers-color-scheme` (dark → Night, light → Day), no manual toggle:
   - **Night**: deep indigo-violet gradient background (`#100d20` → `#1a1434` → `#231a40`), a twinkling star field, periwinkle/lavender glow accent (`#c9b8ff`).
   - **Day**: sunrise gradient background (`#f1e3ee` → `#fbdccb` → `#ffd9a0`), slowly drifting clouds instead of stars, warm gold/coral glow accent (`#d98a4f`).
@@ -398,7 +396,7 @@ Work in this order. Each milestone ends with `npm run check` passing and a local
 
 ## 14. v2 backlog (not in v1)
 
-- Mobile-first responsive pass: small-screen layout, touch tap-target sizing (44px), Home Screen/PWA install on iPhone Safari (deferred in section 11 — desktop-first for now)
+- Dedicated mobile-first redesign: its own small-screen layout/UX (not just the responsive safety-net reflow built in v1), Home Screen/PWA install testing on iPhone Safari (deferred in section 11 — desktop-first for now)
 - Push to GitHub, CI with GitHub Actions, and hosting on Vercel's free plan
 - Morning energy check-in that adjusts the day's load
 - Hour-by-hour plan view

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, IBM_Plex_Mono, Inter } from "next/font/google";
 import BottomNav from "@/components/BottomNav";
+import Sky from "@/components/Sky";
 import "./globals.css";
 
 const cormorantGaramond = Cormorant_Garamond({
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${cormorantGaramond.variable} ${inter.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
       <body className="min-h-screen flex flex-col">
+        <Sky />
         <main className="flex-1">{children}</main>
         <BottomNav />
       </body>

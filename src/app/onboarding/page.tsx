@@ -13,8 +13,7 @@ const PLACE_SEARCH_DEBOUNCE_MS = 500;
 const MIN_DATE = "1900-01-01";
 const TODAY = new Date().toISOString().slice(0, 10);
 
-const buttonClass =
-  "min-h-[44px] rounded-md border border-black/[.12] px-4 py-2 text-sm font-medium dark:border-white/[.18]";
+const buttonClass = "btn";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -102,7 +101,7 @@ export default function OnboardingPage() {
     <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-6 p-6">
       {step === 0 && (
         <section className="flex flex-col gap-2">
-          <label htmlFor="birth-date" className="text-lg font-semibold">
+          <label htmlFor="birth-date" className="heading-display text-lg">
             Birth date
           </label>
           <input
@@ -112,24 +111,20 @@ export default function OnboardingPage() {
             min={MIN_DATE}
             max={TODAY}
             onChange={(e) => setDate(e.target.value)}
-            className="min-h-[44px] rounded-md border border-black/[.12] px-3 dark:border-white/[.18]"
+            className="field"
           />
           {touched && !dateValid && (
-            <p className="text-sm text-red-600 dark:text-red-400">
-              Enter a date between Jan 1, 1900 and today.
-            </p>
+            <p className="text-error text-sm">Enter a date between Jan 1, 1900 and today.</p>
           )}
         </section>
       )}
 
       {step === 1 && (
         <section className="flex flex-col gap-3">
-          <h2 className="text-lg font-semibold">Birth time</h2>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            Your birth certificate usually has it.
-          </p>
+          <h2 className="heading-display text-lg">Birth time</h2>
+          <p className="text-muted text-sm">Your birth certificate usually has it.</p>
           <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-2 text-sm">
               <input
                 type="radio"
                 name="timeAccuracy"
@@ -143,11 +138,11 @@ export default function OnboardingPage() {
                 type="time"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="min-h-[44px] rounded-md border border-black/[.12] px-3 dark:border-white/[.18]"
+                className="field"
               />
             )}
 
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-2 text-sm">
               <input
                 type="radio"
                 name="timeAccuracy"
@@ -163,9 +158,7 @@ export default function OnboardingPage() {
                     key={w.key}
                     type="button"
                     onClick={() => setApproxWindow(w.key)}
-                    className={`${buttonClass} ${
-                      approxWindow === w.key ? "bg-black text-white dark:bg-white dark:text-black" : ""
-                    }`}
+                    className={`${buttonClass} ${approxWindow === w.key ? "btn-primary" : ""}`}
                   >
                     {w.label} ({w.range})
                   </button>
@@ -173,7 +166,7 @@ export default function OnboardingPage() {
               </div>
             )}
 
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-2 text-sm">
               <input
                 type="radio"
                 name="timeAccuracy"
@@ -184,7 +177,7 @@ export default function OnboardingPage() {
             </label>
           </div>
           {touched && !timeValid && (
-            <p className="text-sm text-red-600 dark:text-red-400">
+            <p className="text-error text-sm">
               {timeAccuracy === "exact"
                 ? "Enter a time, or choose a different option."
                 : "Pick a window, or choose a different option."}
@@ -195,12 +188,12 @@ export default function OnboardingPage() {
 
       {step === 2 && (
         <section className="flex flex-col gap-2">
-          <label htmlFor="birth-place" className="text-lg font-semibold">
+          <label htmlFor="birth-place" className="heading-display text-lg">
             Birth place
           </label>
 
           {selectedPlace ? (
-            <div className="flex items-center justify-between gap-2 rounded-md border border-black/[.12] px-3 py-2 dark:border-white/[.18]">
+            <div className="glass-card flex items-center justify-between gap-2 px-3 py-2 text-sm">
               <span>{selectedPlace.name}</span>
               <button
                 type="button"
@@ -208,7 +201,7 @@ export default function OnboardingPage() {
                   setSelectedPlace(null);
                   setPlaceQuery("");
                 }}
-                className="text-sm font-medium underline"
+                className="text-accent text-sm font-medium underline"
               >
                 Change
               </button>
@@ -221,14 +214,10 @@ export default function OnboardingPage() {
                 value={placeQuery}
                 onChange={(e) => setPlaceQuery(e.target.value)}
                 placeholder="Start typing a city..."
-                className="min-h-[44px] rounded-md border border-black/[.12] px-3 dark:border-white/[.18]"
+                className="field"
               />
-              {placeQueryLongEnough && isSearching && (
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">Searching...</p>
-              )}
-              {visibleSearchError && (
-                <p className="text-sm text-red-600 dark:text-red-400">{visibleSearchError}</p>
-              )}
+              {placeQueryLongEnough && isSearching && <p className="text-muted text-sm">Searching...</p>}
+              {visibleSearchError && <p className="text-error text-sm">{visibleSearchError}</p>}
               {visibleResults.length > 0 && (
                 <ul className="flex flex-col gap-1">
                   {visibleResults.map((result) => (
@@ -239,7 +228,7 @@ export default function OnboardingPage() {
                           setSelectedPlace(result);
                           setSearchResults([]);
                         }}
-                        className="min-h-[44px] w-full rounded-md border border-black/[.12] px-3 py-2 text-left text-sm dark:border-white/[.18]"
+                        className="glass-card min-h-[44px] w-full px-3 py-2 text-left text-sm"
                       >
                         {result.name}
                       </button>
@@ -250,23 +239,16 @@ export default function OnboardingPage() {
             </>
           )}
 
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            Search results © OpenStreetMap contributors
-          </p>
+          <p className="text-muted text-xs">Search results © OpenStreetMap contributors</p>
         </section>
       )}
 
       <div className="mt-auto flex justify-between">
-        <button
-          type="button"
-          onClick={goBack}
-          disabled={step === 0}
-          className={`${buttonClass} disabled:opacity-40`}
-        >
+        <button type="button" onClick={goBack} disabled={step === 0} className={buttonClass}>
           Back
         </button>
         {step < 2 ? (
-          <button type="button" onClick={goNext} className={buttonClass}>
+          <button type="button" onClick={goNext} className={`${buttonClass} btn-primary`}>
             Next
           </button>
         ) : (
@@ -274,7 +256,7 @@ export default function OnboardingPage() {
             type="button"
             onClick={handleFinish}
             disabled={!isComplete}
-            className={`${buttonClass} disabled:opacity-40`}
+            className={`${buttonClass} btn-primary`}
           >
             Finish
           </button>

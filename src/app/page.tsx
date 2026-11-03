@@ -97,20 +97,19 @@ export default function TodayPage() {
 
   return (
     <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-4 p-6">
-      <h1 className="text-lg font-semibold">Today</h1>
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">{dayThemes.date}</p>
+      <p className="section-label">Today &middot; {dayThemes.date}</p>
 
-      <section className="flex flex-col gap-2 rounded-md border border-black/[.12] p-4 dark:border-white/[.18]">
-        {readingLoading && !reading && (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">Loading today&apos;s reading...</p>
-        )}
+      <section className="glass-card flex flex-col gap-2 p-5">
+        {readingLoading && !reading && <p className="text-muted text-sm">Loading today&apos;s reading...</p>}
         {reading && (
           <>
-            <h2 className="font-semibold">{reading.title}</h2>
-            <p className="text-sm">{reading.reading}</p>
+            <h2 className="heading-display text-xl">
+              <span className="text-accent">&#10022;</span> {reading.title}
+            </h2>
+            <p className="text-sm leading-relaxed">{reading.reading}</p>
             <p className="text-sm font-medium">{reading.tip}</p>
             {reading.source === "fallback" && (
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="text-muted text-xs">
                 Today&apos;s full reading is taking a break; here&apos;s your quick guide.
               </p>
             )}
@@ -119,22 +118,15 @@ export default function TodayPage() {
       </section>
 
       <section className="flex flex-col gap-2">
-        <h2 className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
-          Today&apos;s themes
-        </h2>
+        <h2 className="section-label">Today&apos;s themes</h2>
         <ul className="flex flex-col gap-1">
           {dayThemes.themes.map((t) => (
-            <li
-              key={t.theme}
-              className="rounded-md border border-black/[.12] px-3 py-2 dark:border-white/[.18]"
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-medium">{TASK_CATEGORY_LABELS[t.theme]}</span>
-                <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                  Strength {t.strength}
-                </span>
+            <li key={t.theme} className="glass-card flex items-center justify-between px-4 py-3">
+              <div>
+                <p className="text-sm font-medium">{TASK_CATEGORY_LABELS[t.theme]}</p>
+                <p className="text-muted text-xs">{t.reasons.join("; ")}</p>
               </div>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">{t.reasons.join("; ")}</p>
+              <span className="chip">STR {String(t.strength).padStart(2, "0")}</span>
             </li>
           ))}
         </ul>
@@ -142,18 +134,12 @@ export default function TodayPage() {
 
       {dayThemes.caution.length > 0 && (
         <section className="flex flex-col gap-1">
-          <h2 className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
-            Go gently on
-          </h2>
-          <p className="text-sm">
-            {dayThemes.caution.map((c) => TASK_CATEGORY_LABELS[c]).join(", ")}
-          </p>
+          <h2 className="section-label">Go gently on</h2>
+          <p className="text-sm">{dayThemes.caution.map((c) => TASK_CATEGORY_LABELS[c]).join(", ")}</p>
         </section>
       )}
 
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">
-        Moon phase: {dayThemes.moonPhase}
-      </p>
+      <p className="text-muted text-sm">Moon phase &middot; {dayThemes.moonPhase}</p>
     </div>
   );
 }

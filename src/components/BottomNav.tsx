@@ -12,7 +12,7 @@ export default function BottomNav() {
   }
 
   return (
-    <nav className="sticky bottom-0 border-t border-black/[.08] bg-white dark:border-white/[.145] dark:bg-black">
+    <nav className="app-nav sticky bottom-0">
       <ul className="mx-auto flex max-w-[720px] items-stretch justify-around">
         {TABS.map((tab) => {
           const active = isActiveRoute(pathname, tab.href);
@@ -21,10 +21,8 @@ export default function BottomNav() {
               <Link
                 href={tab.href}
                 aria-current={active ? "page" : undefined}
-                className={`flex min-h-[44px] items-center justify-center py-2 text-sm font-medium ${
-                  active
-                    ? "text-black dark:text-zinc-50"
-                    : "text-zinc-500 dark:text-zinc-400"
+                className={`nav-link flex min-h-[44px] items-center justify-center py-2 text-sm font-medium ${
+                  active ? "active" : ""
                 }`}
               >
                 {tab.label}

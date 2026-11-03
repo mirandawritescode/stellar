@@ -6,8 +6,7 @@ import { computeNatalChart } from "@/lib/astro/natal";
 import { loadBirthData } from "@/lib/storage/birthData";
 import type { BirthData, NatalChart, PlanetPosition } from "@/lib/types";
 
-const badgeClass =
-  "ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900 dark:text-amber-200";
+const badgeClass = "chip ml-2";
 
 function formatDegree(degreeInSign: number): string {
   const degrees = Math.floor(degreeInSign);
@@ -33,9 +32,9 @@ export default function ChartPage() {
   if (birthData === null) {
     return (
       <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-4 p-6">
-        <h1 className="text-lg font-semibold">Chart</h1>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">No birth details saved yet.</p>
-        <Link href="/onboarding" className="text-sm font-medium underline">
+        <h1 className="heading-display text-lg">Chart</h1>
+        <p className="text-muted text-sm">No birth details saved yet.</p>
+        <Link href="/onboarding" className="text-accent text-sm font-medium underline">
           Add your birth details
         </Link>
       </div>
@@ -51,48 +50,42 @@ export default function ChartPage() {
   return (
     <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-4 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold">Chart</h1>
-        <button
-          type="button"
-          onClick={() => setDetailed((d) => !d)}
-          className="min-h-[44px] rounded-md border border-black/[.12] px-3 text-sm font-medium dark:border-white/[.18]"
-        >
+        <h1 className="heading-display text-lg">Chart</h1>
+        <button type="button" onClick={() => setDetailed((d) => !d)} className="btn">
           {detailed ? "Simple view" : "Detailed view"}
         </button>
       </div>
 
-      <section className="flex flex-col gap-3">
-        <p>
+      <section className="glass-card flex flex-col gap-3 p-5">
+        <p className="text-sm">
           Your Sun is in <strong>{sun.sign}</strong>
           {detailed && ` (${formatDegree(sun.degreeInSign)})`}.
         </p>
-        <p>
+        <p className="text-sm">
           Your Moon is in <strong>{moonSignLabel(moon)}</strong>
           {detailed && !moon.altSign && ` (${formatDegree(moon.degreeInSign)})`}.
         </p>
         {chart.ascendant ? (
-          <p>
+          <p className="text-sm">
             Your rising sign is <strong>{chart.ascendant.sign}</strong>
             {detailed && ` (${formatDegree(chart.ascendant.degreeInSign)})`}
             {housesEstimated && <span className={badgeClass}>Estimated</span>}.
           </p>
         ) : (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Rising sign isn&apos;t shown without a known birth time.
-          </p>
+          <p className="text-muted text-sm">Rising sign isn&apos;t shown without a known birth time.</p>
         )}
       </section>
 
       <section className="flex flex-col gap-2">
-        <h2 className="flex items-center text-sm font-semibold text-zinc-500 dark:text-zinc-400">
+        <h2 className="section-label flex items-center">
           Planets
           {housesEstimated && <span className={badgeClass}>Estimated houses</span>}
         </h2>
         <ul className="flex flex-col gap-1">
           {others.map((p) => (
-            <li key={p.planet} className="flex items-center justify-between gap-2 text-sm">
+            <li key={p.planet} className="glass-card flex items-center justify-between gap-2 px-4 py-2 text-sm">
               <span>{p.planet}</span>
-              <span className="text-right">
+              <span className="text-muted text-right">
                 {p.sign}
                 {detailed && ` ${formatDegree(p.degreeInSign)}`}
                 {p.house !== undefined && ` · House ${p.house}`}
@@ -104,32 +97,34 @@ export default function ChartPage() {
       </section>
 
       {detailed && chart.aspects.length > 0 && (
-        <section className="flex flex-col gap-2">
-          <h2 className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">Aspects</h2>
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="text-zinc-500 dark:text-zinc-400">
-                <th className="font-normal">Planets</th>
-                <th className="font-normal">Aspect</th>
-                <th className="font-normal">Orb</th>
-              </tr>
-            </thead>
-            <tbody>
-              {chart.aspects.map((a) => (
-                <tr key={`${a.a}-${a.b}-${a.type}`}>
-                  <td>
-                    {a.a} &ndash; {a.b}
-                  </td>
-                  <td className="capitalize">{a.type}</td>
-                  <td>{a.orb.toFixed(1)}&deg;</td>
+        <section className="glass-card flex flex-col gap-2 p-5">
+          <h2 className="section-label">Aspects</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="text-muted">
+                  <th className="font-normal">Planets</th>
+                  <th className="font-normal">Aspect</th>
+                  <th className="font-normal">Orb</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {chart.aspects.map((a) => (
+                  <tr key={`${a.a}-${a.b}-${a.type}`}>
+                    <td>
+                      {a.a} &ndash; {a.b}
+                    </td>
+                    <td className="capitalize">{a.type}</td>
+                    <td className="font-data">{a.orb.toFixed(1)}&deg;</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
       )}
 
-      <Link href="/onboarding" className="text-sm font-medium underline">
+      <Link href="/onboarding" className="text-accent text-sm font-medium underline">
         Add or fix birth details
       </Link>
     </div>

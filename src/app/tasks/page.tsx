@@ -8,10 +8,8 @@ import type { Task, TaskCategory } from "@/lib/types";
 const MAX_TITLE_LENGTH = 120;
 const CATEGORIES = Object.keys(TASK_CATEGORY_LABELS) as TaskCategory[];
 
-const fieldClass =
-  "min-h-[44px] rounded-md border border-black/[.12] px-3 dark:border-white/[.18]";
-const buttonClass =
-  "min-h-[44px] rounded-md border border-black/[.12] px-3 text-sm font-medium dark:border-white/[.18]";
+const fieldClass = "field";
+const buttonClass = "btn";
 
 function todayString(): string {
   return new Date().toISOString().slice(0, 10);
@@ -114,16 +112,16 @@ export default function TasksPage() {
   return (
     <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-4 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold">Tasks</h1>
+        <h1 className="heading-display text-lg">Tasks</h1>
         {form === null && (
-          <button type="button" onClick={openAddForm} className={buttonClass}>
+          <button type="button" onClick={openAddForm} className={`${buttonClass} btn-primary`}>
             Add task
           </button>
         )}
       </div>
 
       {form !== null && (
-        <section className="flex flex-col gap-3 rounded-md border border-black/[.12] p-4 dark:border-white/[.18]">
+        <section className="glass-card flex flex-col gap-3 p-5">
           <div className="flex flex-col gap-1">
             <label htmlFor="task-title" className="text-sm font-medium">
               Title
@@ -137,9 +135,7 @@ export default function TasksPage() {
               className={fieldClass}
             />
             {touched && !titleValid && (
-              <p className="text-sm text-red-600 dark:text-red-400">
-                Enter a title (up to {MAX_TITLE_LENGTH} characters).
-              </p>
+              <p className="text-error text-sm">Enter a title (up to {MAX_TITLE_LENGTH} characters).</p>
             )}
           </div>
 
@@ -160,9 +156,7 @@ export default function TasksPage() {
                 </option>
               ))}
             </select>
-            {touched && !categoryValid && (
-              <p className="text-sm text-red-600 dark:text-red-400">Choose a category.</p>
-            )}
+            {touched && !categoryValid && <p className="text-error text-sm">Choose a category.</p>}
           </div>
 
           <div className="flex flex-col gap-1">
@@ -182,7 +176,7 @@ export default function TasksPage() {
             <button type="button" onClick={closeForm} className={buttonClass}>
               Cancel
             </button>
-            <button type="button" onClick={handleSubmit} className={buttonClass}>
+            <button type="button" onClick={handleSubmit} className={`${buttonClass} btn-primary`}>
               {form.id === null ? "Add" : "Save"}
             </button>
           </div>
@@ -190,16 +184,11 @@ export default function TasksPage() {
       )}
 
       {ordered.length === 0 ? (
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          No tasks yet. Add your first one to get started.
-        </p>
+        <p className="text-muted text-sm">No tasks yet. Add your first one to get started.</p>
       ) : (
         <ul className="flex flex-col gap-2">
           {ordered.map((task) => (
-            <li
-              key={task.id}
-              className="flex items-center gap-1 rounded-md border border-black/[.12] px-1 py-1 dark:border-white/[.18]"
-            >
+            <li key={task.id} className="glass-card flex items-center gap-1 px-1 py-1">
               <label className="flex h-11 w-11 flex-shrink-0 items-center justify-center">
                 <input
                   type="checkbox"
@@ -215,10 +204,8 @@ export default function TasksPage() {
                 onClick={() => openEditForm(task)}
                 className="flex min-h-[44px] flex-1 flex-col items-start justify-center text-left"
               >
-                <span className={task.done ? "text-zinc-500 line-through dark:text-zinc-400" : ""}>
-                  {task.title}
-                </span>
-                <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                <span className={`text-sm ${task.done ? "text-muted line-through" : ""}`}>{task.title}</span>
+                <span className="text-muted text-xs">
                   {TASK_CATEGORY_LABELS[task.category]}
                   {task.dueDate && ` · Due ${task.dueDate}`}
                 </span>
@@ -226,11 +213,11 @@ export default function TasksPage() {
 
               {confirmDeleteId === task.id ? (
                 <div className="flex flex-shrink-0 items-center gap-1 pr-1">
-                  <span className="text-xs text-zinc-500 dark:text-zinc-400">Delete?</span>
+                  <span className="text-muted text-xs">Delete?</span>
                   <button
                     type="button"
                     onClick={() => handleDelete(task.id)}
-                    className="min-h-[44px] px-2 text-xs font-medium text-red-600 dark:text-red-400"
+                    className="text-error min-h-[44px] px-2 text-xs font-medium"
                   >
                     Yes
                   </button>
@@ -247,7 +234,7 @@ export default function TasksPage() {
                   type="button"
                   onClick={() => setConfirmDeleteId(task.id)}
                   aria-label={`Delete "${task.title}"`}
-                  className="min-h-[44px] flex-shrink-0 px-2 text-xs text-zinc-500 dark:text-zinc-400"
+                  className="text-muted min-h-[44px] flex-shrink-0 px-2 text-xs"
                 >
                   Delete
                 </button>

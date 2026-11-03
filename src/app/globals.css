@@ -17,6 +17,7 @@
   --nav-border: rgba(180, 110, 70, 0.18);
   --sky-particle: rgba(255, 255, 255, 0.75);
   --scanline: rgba(120, 70, 40, 0.025);
+  --error: #c4425c;
 
   color-scheme: light;
 }
@@ -46,14 +47,229 @@
     --nav-border: rgba(201, 184, 255, 0.18);
     --sky-particle: #ffffff;
     --scanline: rgba(255, 255, 255, 0.025);
+    --error: #f0829b;
 
     color-scheme: dark;
   }
 }
 
 body {
-  background: var(--bg);
-  background-attachment: fixed;
   color: var(--text);
   font-family: var(--font-body), system-ui, sans-serif;
+}
+
+/* ---------- Shared visual primitives ---------- */
+
+.heading-display {
+  font-family: var(--font-display), serif;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--text-heading);
+  text-shadow: 0 0 16px var(--accent-glow);
+}
+
+.section-label {
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.glass-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.6875rem;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  border-radius: 999px;
+  padding: 0.1875rem 0.5625rem;
+  white-space: nowrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 1rem;
+  border-radius: 9px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid var(--card-border);
+  color: var(--text);
+  background: var(--card-bg);
+}
+
+.btn-primary {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+  box-shadow: 0 0 14px var(--accent-glow);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+}
+
+.field {
+  min-height: 44px;
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 9px;
+  padding: 0 0.75rem;
+  color: var(--text);
+  font-size: 0.875rem;
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+.field::placeholder {
+  color: var(--text-muted);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-accent {
+  color: var(--accent);
+}
+
+.text-error {
+  color: var(--error);
+}
+
+.font-data {
+  font-family: var(--font-mono), monospace;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--accent);
+}
+
+.app-nav {
+  background: var(--nav-bg);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--nav-border);
+}
+
+.nav-link {
+  color: var(--text-muted);
+}
+
+.nav-link.active {
+  color: var(--accent);
+  text-shadow: 0 0 10px var(--accent-glow);
+}
+
+/* ---------- Sky background (stars for Night, clouds for Day) ---------- */
+
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--bg);
+}
+
+.sky::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    var(--scanline) 0px,
+    var(--scanline) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.sky-stars {
+  display: none;
+}
+
+.sky-clouds {
+  display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+  .sky-stars {
+    display: block;
+  }
+
+  .sky-clouds {
+    display: none;
+  }
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--sky-particle);
+  color: var(--sky-particle);
+  animation: sky-twinkle 2s ease-in-out infinite;
+}
+
+.star.violet {
+  background: #d9c8ff;
+  color: #d9c8ff;
+}
+
+@keyframes sky-twinkle {
+  0%,
+  100% {
+    opacity: 0.08;
+    transform: scale(0.6);
+    box-shadow: none;
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.6);
+    box-shadow: 0 0 6px 1px currentColor;
+  }
+}
+
+.cloud {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--sky-particle);
+  filter: blur(6px);
+  animation: sky-drift 14s ease-in-out infinite;
+}
+
+@keyframes sky-drift {
+  0%,
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translateX(14px) scale(1.06);
+    opacity: 0.95;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .star {
+    animation: none;
+    opacity: 0.7;
+    box-shadow: none;
+  }
+
+  .cloud {
+    animation: none;
+  }
 }

@@ -1,35 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ArchGlyph from "@/components/ArchGlyph";
-import Modal from "@/components/Modal";
+import TaskFormModal from "@/components/TaskFormModal";
 import { loadTasks, saveTasks, sortTasksForDisplay } from "@/lib/storage/tasks";
 import { TASK_CATEGORY_LABELS } from "@/lib/types";
-import type { Task, TaskCategory } from "@/lib/types";
-
-const MAX_TITLE_LENGTH = 120;
-const CATEGORIES = Object.keys(TASK_CATEGORY_LABELS) as TaskCategory[];
-
-const fieldClass = "field";
-const buttonClass = "btn";
+import type { Task } from "@/lib/types";
 
 function todayString(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-interface FormState {
-  id: string | null;
-  title: string;
-  category: TaskCategory | "";
-  dueDate: string;
-}
-
-const EMPTY_FORM: FormState = { id: null, title: "", category: "", dueDate: "" };
-
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[] | undefined>(undefined);
-  const [form, setForm] = useState<FormState | null>(null);
-  const [touched, setTouched] = useState(false);
+  // "new" opens the form for adding a task; a Task opens it pre-filled for editing.
+  const [formTarget, setFormTarget] = useState<"new" | Task | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -49,10 +33,6 @@ export default function TasksPage() {
 
   const ordered = sortTasksForDisplay(taskList, todayString());
 
-  const titleValid = form !== null && form.title.trim().length > 0 && form.title.length <= MAX_TITLE_LENGTH;
-  const categoryValid = form !== null && form.category !== "";
-  const formValid = titleValid && categoryValid;
-
   function persist(next: Task[]) {
     try {
       saveTasks(next);
@@ -63,49 +43,13 @@ export default function TasksPage() {
     }
   }
 
-  function openAddForm() {
-    setForm(EMPTY_FORM);
-    setTouched(false);
-  }
-
-  function openEditForm(task: Task) {
-    setForm({ id: task.id, title: task.title, category: task.category, dueDate: task.dueDate ?? "" });
-    setTouched(false);
-  }
-
-  function closeForm() {
-    setForm(null);
-    setTouched(false);
-  }
-
-  function handleSubmit() {
-    setTouched(true);
-    if (!form || !formValid) return;
-
-    if (form.id === null) {
-      const newTask: Task = {
-        id: crypto.randomUUID(),
-        title: form.title.trim(),
-        category: form.category as TaskCategory,
-        dueDate: form.dueDate || undefined,
-        done: false,
-        createdAt: new Date().toISOString(),
-      };
-      persist([...taskList, newTask]);
+  function handleSaveTask(task: Task) {
+    if (formTarget === "new") {
+      persist([...taskList, task]);
     } else {
-      const next = taskList.map((t) =>
-        t.id === form.id
-          ? {
-              ...t,
-              title: form.title.trim(),
-              category: form.category as TaskCategory,
-              dueDate: form.dueDate || undefined,
-            }
-          : t,
-      );
-      persist(next);
+      persist(taskList.map((t) => (t.id === task.id ? task : t)));
     }
-    closeForm();
+    setFormTarget(null);
   }
 
   function handleToggleDone(task: Task) {
@@ -127,82 +71,19 @@ export default function TasksPage() {
     <div className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-4 p-6">
       <div className="flex items-center justify-between">
         <h1 className="heading-display text-lg">Tasks</h1>
-        {form === null && (
-          <button type="button" onClick={openAddForm} className={`${buttonClass} btn-primary`}>
-            Add task
-          </button>
-        )}
+        <button type="button" onClick={() => setFormTarget("new")} className="btn btn-primary">
+          Add task
+        </button>
       </div>
 
       {saveError && <p className="text-error text-sm">{saveError}</p>}
 
-      {form !== null && (
-        <Modal onClose={closeForm}>
-          <section className="arch-card flex flex-col gap-3">
-            <ArchGlyph />
-            <h2 className="heading-display text-center text-lg">
-              {form.id === null ? "New task" : "Edit task"}
-            </h2>
-            <div className="flex flex-col gap-1">
-              <label htmlFor="task-title" className="text-sm font-medium">
-                Title
-              </label>
-              <input
-                id="task-title"
-                type="text"
-                value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-                maxLength={MAX_TITLE_LENGTH}
-                className={fieldClass}
-              />
-              {touched && !titleValid && (
-                <p className="text-error text-sm">Enter a title (up to {MAX_TITLE_LENGTH} characters).</p>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <label htmlFor="task-category" className="text-sm font-medium">
-                Category
-              </label>
-              <select
-                id="task-category"
-                value={form.category}
-                onChange={(e) => setForm({ ...form, category: e.target.value as TaskCategory })}
-                className={fieldClass}
-              >
-                <option value="">Choose a category</option>
-                {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
-                    {TASK_CATEGORY_LABELS[c]}
-                  </option>
-                ))}
-              </select>
-              {touched && !categoryValid && <p className="text-error text-sm">Choose a category.</p>}
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <label htmlFor="task-due" className="text-sm font-medium">
-                Due date (optional)
-              </label>
-              <input
-                id="task-due"
-                type="date"
-                value={form.dueDate}
-                onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
-                className={fieldClass}
-              />
-            </div>
-
-            <div className="flex justify-end gap-2">
-              <button type="button" onClick={closeForm} className={buttonClass}>
-                Cancel
-              </button>
-              <button type="button" onClick={handleSubmit} className={`${buttonClass} btn-primary`}>
-                {form.id === null ? "Add" : "Save"}
-              </button>
-            </div>
-          </section>
-        </Modal>
+      {formTarget !== null && (
+        <TaskFormModal
+          task={formTarget === "new" ? undefined : formTarget}
+          onClose={() => setFormTarget(null)}
+          onSave={handleSaveTask}
+        />
       )}
 
       {ordered.length === 0 ? (
@@ -223,7 +104,7 @@ export default function TasksPage() {
 
               <button
                 type="button"
-                onClick={() => openEditForm(task)}
+                onClick={() => setFormTarget(task)}
                 className="flex min-h-[44px] flex-1 flex-col items-start justify-center text-left"
               >
                 <span className={`text-sm ${task.done ? "text-muted line-through" : ""}`}>{task.title}</span>

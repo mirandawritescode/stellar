@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ArchGlyph from "@/components/ArchGlyph";
+import TaskFormModal from "@/components/TaskFormModal";
 import { computeNatalChart } from "@/lib/astro/natal";
 import { computeTransits } from "@/lib/astro/transits";
 import { computeDayThemes } from "@/lib/astro/themes";
@@ -32,6 +32,8 @@ export default function TodayPage() {
   const [reading, setReading] = useState<DailyReading | null>(null);
   const [readingLoading, setReadingLoading] = useState(false);
   const [tasks, setTasks] = useState<Task[] | undefined>(undefined);
+  const [addingTask, setAddingTask] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     const data = loadBirthData();
@@ -120,6 +122,16 @@ export default function TodayPage() {
     );
   }
 
+  function persist(next: Task[]) {
+    try {
+      saveTasks(next);
+      setTasks(next);
+      setSaveError(null);
+    } catch {
+      setSaveError("Couldn't save your changes. Your browser's storage might be full or unavailable.");
+    }
+  }
+
   function handleToggleDone(task: Task) {
     if (!tasks) return;
     const willBeDone = !task.done;
@@ -128,8 +140,13 @@ export default function TodayPage() {
         ? { ...t, done: willBeDone, completedAt: willBeDone ? new Date().toISOString() : undefined }
         : t,
     );
-    saveTasks(next);
-    setTasks(next);
+    persist(next);
+  }
+
+  function handleAddTask(task: Task) {
+    if (!tasks) return;
+    persist([...tasks, task]);
+    setAddingTask(false);
   }
 
   const ranked = rankTasks(tasks, dayThemes, dayThemes.date);
@@ -139,6 +156,10 @@ export default function TodayPage() {
   return (
     <div className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-4 p-6">
       <p className="section-label">Today &middot; {dayThemes.date}</p>
+
+      {saveError && <p className="text-error text-sm">{saveError}</p>}
+
+      {addingTask && <TaskFormModal onClose={() => setAddingTask(false)} onSave={handleAddTask} />}
 
       <section className="arch-card flex flex-col gap-2">
         <ArchGlyph />
@@ -176,9 +197,9 @@ export default function TodayPage() {
 
       <div className="flex items-center justify-between">
         <h2 className="section-label">Best for today</h2>
-        <Link href="/tasks" className="btn">
+        <button type="button" onClick={() => setAddingTask(true)} className="btn">
           Add task
-        </Link>
+        </button>
       </div>
 
       {bestForToday.length === 0 ? (

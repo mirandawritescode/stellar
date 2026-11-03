@@ -127,6 +127,12 @@ export function moonPhaseFromAngle(angle: number): MoonPhase {
   return "waning";
 }
 
+/** Local noon today — a stable, timezone-safe reference moment for "today's" transits. */
+export function localNoonToday(): Date {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0);
+}
+
 export function computeTransits(natalChart: NatalChart, localNoon: Date): Transits {
   const transitingPlanets = buildTransitingPlanets(localNoon);
   const aspects = computeTransitAspects(transitingPlanets, natalChart.planets);

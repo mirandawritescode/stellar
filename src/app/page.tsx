@@ -6,7 +6,7 @@ import ArchGlyph from "@/components/ArchGlyph";
 import PointsChip from "@/components/PointsChip";
 import TaskFormModal from "@/components/TaskFormModal";
 import { computeNatalChart } from "@/lib/astro/natal";
-import { computeTransits } from "@/lib/astro/transits";
+import { computeTransits, localNoonToday } from "@/lib/astro/transits";
 import { computeDayThemes } from "@/lib/astro/themes";
 import { CAUTION_REASON, rankTasks } from "@/lib/planner/rank";
 import { buildFallbackReading } from "@/lib/reading";
@@ -16,11 +16,6 @@ import { loadCachedReading, saveCachedReading } from "@/lib/storage/reading";
 import { loadTasks, saveTasks } from "@/lib/storage/tasks";
 import { TASK_CATEGORY_LABELS } from "@/lib/types";
 import type { BirthData, DailyReading, Task } from "@/lib/types";
-
-function localNoonToday(): Date {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0);
-}
 
 export default function TodayPage() {
   const router = useRouter();

@@ -22,10 +22,8 @@ function compareOpenTasks(a: Task, b: Task): number {
   return a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0;
 }
 
-export function sortTasksForDisplay(tasks: Task[], today: string): Task[] {
-  const open = tasks.filter((t) => !t.done).sort(compareOpenTasks);
-
-  const recentlyCompleted = tasks
+export function recentlyCompletedTasks(tasks: Task[], today: string): Task[] {
+  return tasks
     .filter(
       (t) =>
         t.done &&
@@ -33,8 +31,11 @@ export function sortTasksForDisplay(tasks: Task[], today: string): Task[] {
         daysBetween(t.completedAt.slice(0, 10), today) <= RECENT_COMPLETED_DAYS,
     )
     .sort((a, b) => (b.completedAt ?? "").localeCompare(a.completedAt ?? ""));
+}
 
-  return [...open, ...recentlyCompleted];
+export function sortTasksForDisplay(tasks: Task[], today: string): Task[] {
+  const open = tasks.filter((t) => !t.done).sort(compareOpenTasks);
+  return [...open, ...recentlyCompletedTasks(tasks, today)];
 }
 
 export function pruneOldCompletedTasks(tasks: Task[], today: string): Task[] {

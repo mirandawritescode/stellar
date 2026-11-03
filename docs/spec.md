@@ -79,8 +79,8 @@ All fields validate together on submit ("Reveal my chart"), showing inline error
 - Error and limit states in section 8.4.
 
 ### 3.5 Tasks (`/tasks`)
-- Full list: open tasks first (by due date), then completed (last 7 days).
-- Add / edit form: title (required, max 120 chars), category (required), due date (optional).
+- Full list: open tasks first, then completed (last 7 days). As of 2026-11-03, a "Sort by" toggle (shown once birth data exists) switches the open-task order between due date and today's points — same scoring as Today, with the same points chip and hover/focus breakdown on each open task. Completed tasks stay at the end either way.
+- Add / edit form: title (required, max 120 chars), category (required), due date (optional). Opens as a modal (`TaskFormModal`, shared with Today's "Add task").
 - Delete with a confirm step. Completed tasks older than 30 days are removed automatically.
 
 ### 3.6 Settings (`/settings`)

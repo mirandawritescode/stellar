@@ -20,6 +20,10 @@ function localNoonToday(): Date {
   return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0);
 }
 
+function formatPoints(score: number): string {
+  return score > 0 ? `+${score}` : String(score);
+}
+
 export default function TodayPage() {
   const router = useRouter();
   const [birthData, setBirthData] = useState<BirthData | null>(null);
@@ -147,6 +151,21 @@ export default function TodayPage() {
         )}
       </section>
 
+      <section className="flex flex-col gap-2">
+        <h2 className="section-label">Today&apos;s themes</h2>
+        <ul className="flex flex-col gap-1">
+          {dayThemes.themes.map((t) => (
+            <li key={t.theme} className="glass-card flex items-center justify-between px-4 py-3">
+              <div>
+                <p className="text-sm font-medium">{TASK_CATEGORY_LABELS[t.theme]}</p>
+                <p className="text-muted text-xs">{t.reasons.join("; ")}</p>
+              </div>
+              <span className="chip">STR {String(t.strength).padStart(2, "0")}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
       <div className="flex items-center justify-between">
         <h2 className="section-label">Best for today</h2>
         <Link href="/tasks" className="btn">
@@ -158,7 +177,7 @@ export default function TodayPage() {
         <p className="text-muted text-sm">No open tasks yet. Add your first one to get started.</p>
       ) : (
         <ul className="flex flex-col gap-1">
-          {bestForToday.map(({ task, reason }) => (
+          {bestForToday.map(({ task, score, reason }) => (
             <li key={task.id} className="glass-card flex items-center gap-1 px-1 py-1">
               <label className="flex h-11 w-11 flex-shrink-0 items-center justify-center">
                 <input
@@ -174,6 +193,7 @@ export default function TodayPage() {
                 <p className="text-muted text-xs">{TASK_CATEGORY_LABELS[task.category]}</p>
                 {reason && <p className="text-accent text-xs">{reason}</p>}
               </div>
+              <span className="chip mr-2">PTS {formatPoints(score)}</span>
             </li>
           ))}
         </ul>
@@ -183,7 +203,7 @@ export default function TodayPage() {
         <section className="flex flex-col gap-2">
           <h2 className="section-label">Everything else</h2>
           <ul className="flex flex-col gap-1">
-            {everythingElse.map(({ task }) => (
+            {everythingElse.map(({ task, score }) => (
               <li key={task.id} className="glass-card flex items-center gap-1 px-1 py-1">
                 <label className="flex h-11 w-11 flex-shrink-0 items-center justify-center">
                   <input
@@ -198,6 +218,7 @@ export default function TodayPage() {
                   <p className="text-sm">{task.title}</p>
                   <p className="text-muted text-xs">{TASK_CATEGORY_LABELS[task.category]}</p>
                 </div>
+                <span className="chip mr-2">PTS {formatPoints(score)}</span>
               </li>
             ))}
           </ul>

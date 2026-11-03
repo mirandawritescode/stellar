@@ -29,12 +29,23 @@ export default function OnboardingPage() {
   const [searchResults, setSearchResults] = useState<GeocodeResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
+  // The query string the most recently completed search was for, so a "no
+  // results" message only shows for the query it actually answers, not a
+  // stale one left over while the next search is still debouncing.
+  const [searchedQuery, setSearchedQuery] = useState<string | null>(null);
 
   const dateValid = isValidBirthDate(date, TODAY);
   const timeValid = isBirthTimeComplete(timeAccuracy, time, approxWindow);
-  const placeQueryLongEnough = placeQuery.trim().length >= MIN_PLACE_QUERY_LENGTH;
+  const trimmedQuery = placeQuery.trim();
+  const placeQueryLongEnough = trimmedQuery.length >= MIN_PLACE_QUERY_LENGTH;
   const visibleResults = placeQueryLongEnough ? searchResults : [];
   const visibleSearchError = placeQueryLongEnough ? searchError : null;
+  const noResultsFound =
+    placeQueryLongEnough &&
+    !isSearching &&
+    !visibleSearchError &&
+    searchedQuery === trimmedQuery &&
+    visibleResults.length === 0;
 
   useEffect(() => {
     const query = placeQuery.trim();
@@ -51,7 +62,10 @@ export default function OnboardingPage() {
           if (!res.ok) throw new Error("search failed");
           return res.json() as Promise<GeocodeResult[]>;
         })
-        .then((results) => setSearchResults(results))
+        .then((results) => {
+          setSearchResults(results);
+          setSearchedQuery(query);
+        })
         .catch((err: unknown) => {
           if (err instanceof Error && err.name !== "AbortError") {
             setSearchError("Couldn't search right now. Try again.");
@@ -123,7 +137,8 @@ export default function OnboardingPage() {
         <section className="flex flex-col gap-3">
           <h2 className="heading-display text-lg">Birth time</h2>
           <p className="text-muted text-sm">Your birth certificate usually has it.</p>
-          <div className="flex flex-col gap-2">
+          <fieldset className="flex flex-col gap-2">
+            <legend className="sr-only">Birth time accuracy</legend>
             <label className="flex items-center gap-2 text-sm">
               <input
                 type="radio"
@@ -158,6 +173,7 @@ export default function OnboardingPage() {
                     key={w.key}
                     type="button"
                     onClick={() => setApproxWindow(w.key)}
+                    aria-pressed={approxWindow === w.key}
                     className={`${buttonClass} ${approxWindow === w.key ? "btn-primary" : ""}`}
                   >
                     {w.label} ({w.range})
@@ -175,7 +191,7 @@ export default function OnboardingPage() {
               />
               I don&apos;t know
             </label>
-          </div>
+          </fieldset>
           {touched && !timeValid && (
             <p className="text-error text-sm">
               {timeAccuracy === "exact"
@@ -218,6 +234,7 @@ export default function OnboardingPage() {
               />
               {placeQueryLongEnough && isSearching && <p className="text-muted text-sm">Searching...</p>}
               {visibleSearchError && <p className="text-error text-sm">{visibleSearchError}</p>}
+              {noResultsFound && <p className="text-muted text-sm">No places found. Try a different spelling.</p>}
               {visibleResults.length > 0 && (
                 <ul className="flex flex-col gap-1">
                   {visibleResults.map((result) => (

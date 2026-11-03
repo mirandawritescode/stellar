@@ -29,13 +29,20 @@ export default function TasksPage() {
   const [form, setForm] = useState<FormState | null>(null);
   const [touched, setTouched] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing from localStorage, a browser-only external system unavailable during SSR
     setTasks(loadTasks(todayString()));
   }, []);
 
-  if (tasks === undefined) return null;
+  if (tasks === undefined) {
+    return (
+      <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-4 p-6">
+        <p className="text-muted text-sm">Loading...</p>
+      </div>
+    );
+  }
   const taskList: Task[] = tasks;
 
   const ordered = sortTasksForDisplay(taskList, todayString());
@@ -45,8 +52,13 @@ export default function TasksPage() {
   const formValid = titleValid && categoryValid;
 
   function persist(next: Task[]) {
-    saveTasks(next);
-    setTasks(next);
+    try {
+      saveTasks(next);
+      setTasks(next);
+      setSaveError(null);
+    } catch {
+      setSaveError("Couldn't save your changes. Your browser's storage might be full or unavailable.");
+    }
   }
 
   function openAddForm() {
@@ -119,6 +131,8 @@ export default function TasksPage() {
           </button>
         )}
       </div>
+
+      {saveError && <p className="text-error text-sm">{saveError}</p>}
 
       {form !== null && (
         <section className="glass-card flex flex-col gap-3 p-5">
@@ -217,6 +231,7 @@ export default function TasksPage() {
                   <button
                     type="button"
                     onClick={() => handleDelete(task.id)}
+                    aria-label={`Yes, delete "${task.title}"`}
                     className="text-error min-h-[44px] px-2 text-xs font-medium"
                   >
                     Yes
@@ -224,6 +239,7 @@ export default function TasksPage() {
                   <button
                     type="button"
                     onClick={() => setConfirmDeleteId(null)}
+                    aria-label={`No, keep "${task.title}"`}
                     className="min-h-[44px] px-2 text-xs font-medium"
                   >
                     No

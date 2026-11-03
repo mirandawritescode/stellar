@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, IBM_Plex_Mono, Inter } from "next/font/google";
 import BottomNav from "@/components/BottomNav";
 import Sky from "@/components/Sky";
@@ -26,6 +26,13 @@ const ibmPlexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "Astro Planner",
   description: "Your to-do list, arranged around your star chart.",
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#100d20" },
+    { media: "(prefers-color-scheme: light)", color: "#fbdccb" },
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

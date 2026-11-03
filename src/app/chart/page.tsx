@@ -27,7 +27,14 @@ export default function ChartPage() {
     setBirthData(loadBirthData());
   }, []);
 
-  if (birthData === undefined) return null;
+  if (birthData === undefined) {
+    return (
+      <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-4 p-6">
+        <h1 className="heading-display text-lg">Chart</h1>
+        <p className="text-muted text-sm">Loading...</p>
+      </div>
+    );
+  }
 
   if (birthData === null) {
     return (
@@ -41,7 +48,22 @@ export default function ChartPage() {
     );
   }
 
-  const chart: NatalChart = computeNatalChart(birthData);
+  let chart: NatalChart;
+  try {
+    chart = computeNatalChart(birthData);
+  } catch {
+    return (
+      <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-4 p-6">
+        <h1 className="heading-display text-lg">Chart</h1>
+        <p className="text-error text-sm">
+          Something went wrong reading your chart. Try re-entering your birth details.
+        </p>
+        <Link href="/onboarding" className="text-accent text-sm font-medium underline">
+          Add or fix birth details
+        </Link>
+      </div>
+    );
+  }
   const sun = chart.planets.find((p) => p.planet === "Sun")!;
   const moon = chart.planets.find((p) => p.planet === "Moon")!;
   const others = chart.planets.filter((p) => p.planet !== "Sun" && p.planet !== "Moon");
@@ -103,9 +125,15 @@ export default function ChartPage() {
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="text-muted">
-                  <th className="font-normal">Planets</th>
-                  <th className="font-normal">Aspect</th>
-                  <th className="font-normal">Orb</th>
+                  <th scope="col" className="font-normal">
+                    Planets
+                  </th>
+                  <th scope="col" className="font-normal">
+                    Aspect
+                  </th>
+                  <th scope="col" className="font-normal">
+                    Orb
+                  </th>
                 </tr>
               </thead>
               <tbody>

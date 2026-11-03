@@ -111,7 +111,13 @@ export default function TodayPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dayThemes?.date, birthData]);
 
-  if (!ready || !birthData || !dayThemes || tasks === undefined) return null;
+  if (!ready || !birthData || !dayThemes || tasks === undefined) {
+    return (
+      <div className="mx-auto flex max-w-[720px] flex-1 flex-col gap-4 p-6">
+        <p className="text-muted text-sm">Loading...</p>
+      </div>
+    );
+  }
 
   function handleToggleDone(task: Task) {
     if (!tasks) return;

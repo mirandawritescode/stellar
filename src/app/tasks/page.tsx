@@ -69,8 +69,8 @@ export default function TasksPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-4 p-6">
-      <div className="flex items-center justify-between">
-        <h1 className="heading-display text-lg">Tasks</h1>
+      <div className="relative flex items-center justify-end">
+        <h1 className="heading-display absolute inset-x-0 text-center text-lg">Tasks</h1>
         <button type="button" onClick={() => setFormTarget("new")} className="btn btn-primary">
           Add task
         </button>

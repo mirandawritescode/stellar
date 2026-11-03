@@ -1,0 +1,106 @@
+M6 — Ranked Plan: how the logic works
+Reference notes, written before implementation. See 2026-11-02-m6-ranked-plan-checklist.md
+for the build checklist and docs/spec.md section 7 for the source spec.
+
+THE BIG PICTURE
+
+Every open task gets a numeric SCORE for today, based on two completely
+different things mixed together:
+  1. Ordinary to-do-list urgency (is it overdue? due soon?)
+  2. Today's astrology (does this task's category match one of today's
+     computed themes from M5, or is it in today's "caution" list?)
+
+Higher score = closer to the top of "Best for today." This is the payoff
+for the whole category system set up back in M4 - a task's category
+(Focus work, Calls & messages, etc.) is literally the same vocabulary as
+a day's themes, so they can be compared directly.
+
+Completed tasks are excluded entirely - this only ranks open ones.
+
+THE SIX SCORING FACTORS
+
+Each applies independently; a task can get points from several at once.
+
+1. Overdue (due date is in the past)              -> +5
+2. Due today                                        -> +4
+3. Due within the next 3 days (but not today)       -> +2
+4. Category matches one of today's top themes       -> + that theme's
+                                                        strength x 2
+   (strength is 1-3 from M5, so this factor alone can add 2, 4, or 6)
+5. Category is in today's "caution" list            -> -1
+   (caution doesn't mean "skip it" - the task still shows, just scored
+   a little lower, and its reason will suggest a smaller first step)
+6. Created more than 7 days ago and still not done  -> +1
+   (a small nudge so old tasks don't get buried forever)
+
+A task with no due date simply skips factors 1-3 (none of them apply -
+it's neither overdue, due today, nor due soon). It can still score points
+from the astrology factors (4, 5) and the staleness factor (6).
+
+TIES
+
+If two tasks land on the exact same score:
+  1. Earlier due date wins (sorts first)
+  2. If that's also tied (or both have no due date), older createdAt wins
+
+WORKED EXAMPLE
+
+Say today's themes (from M5) are: communication (strength 3), admin
+(strength 2); caution list: [social].
+
+  Task A: "Call the dentist" - category communication, due today,
+  created 10 days ago.
+    +4  (due today)
+    +6  (communication matches today's theme, strength 3 x 2)
+    +1  (created >7 days ago, still open)
+    = 11
+
+  Task B: "Reply to the group chat" - category social, due in 2 days.
+    +2  (due soon)
+    -1  (social is in caution today)
+    = 1
+
+  Task C: "File the insurance claim" - category admin, overdue since
+  last Monday, created yesterday.
+    +5  (overdue)
+    +4  (admin matches today's theme, strength 2 x 2)
+    = 9
+
+  Order: Task A (11), Task C (9), Task B (1).
+
+REASONS (top 3 only)
+
+Only the top 3 ranked tasks get a one-line reason shown in the UI - the
+rest of the list just shows task details with no reason text. The reason
+names the SINGLE strongest factor that contributed to the score, not a
+combined summary of everything. Examples from the spec:
+  "Due today"
+  "Overdue since Mon"
+  "Good day for calls: Mercury trine your Sun"   (a theme-match reason,
+                                                    reusing the actual
+                                                    reason text M5 already
+                                                    generated for that
+                                                    theme)
+  "Go gently: try a 15-minute first step"         (the caution reason)
+
+OPEN DESIGN CALL: picking the "strongest" factor when two tie in points.
+The spec doesn't give an exact priority order, so the plan is to rank
+factor PRIORITY roughly in the order they're listed in the spec's table
+(overdue > due today > due soon > theme match > caution > stale) when
+two factors tie numerically - i.e. urgency reasons win over astrology
+reasons when scores are equal, since "it's late" is a more concrete,
+immediately actionable fact than "today's vibe matches." This is a
+judgment call, not something the spec states explicitly - worth a quick
+look together once real task lists make it visible which reason actually
+reads better.
+
+WHERE THIS FEEDS THE UI
+
+The Today screen gets two new sections on top of what M5 already built
+(the reading card, the raw theme list):
+  - "Best for today": the top 3 ranked tasks, each with its reason.
+  - "Everything else": the rest of the OPEN tasks, still in ranked
+    order, just without reason text.
+The raw theme list and caution section from M5 can stay as-is underneath,
+or the ranked list can replace them as the primary view - that's a UI
+layout call for the wiring step, not part of the ranking logic itself.

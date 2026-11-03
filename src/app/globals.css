@@ -1,26 +1,59 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Day — sunrise gradient, warm gold/coral accent */
+  --bg: linear-gradient(165deg, #f1e3ee 0%, #fbdccb 55%, #ffd9a0 100%);
+  --card-bg: rgba(255, 255, 255, 0.45);
+  --card-border: rgba(180, 110, 70, 0.22);
+  --card-shadow: 0 0 24px rgba(230, 150, 80, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  --text: #4a3344;
+  --text-heading: #5a3a2e;
+  --text-muted: #a8735f;
+  --accent: #d98a4f;
+  --accent-glow: rgba(230, 160, 90, 0.45);
+  --accent-soft: rgba(230, 150, 80, 0.14);
+  --accent-border: rgba(180, 110, 70, 0.3);
+  --nav-bg: rgba(255, 245, 235, 0.55);
+  --nav-border: rgba(180, 110, 70, 0.18);
+  --sky-particle: rgba(255, 255, 255, 0.75);
+  --scanline: rgba(120, 70, 40, 0.025);
+
+  color-scheme: light;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-foreground: var(--text);
+  --font-sans: var(--font-body);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Night — deep indigo-violet, periwinkle glow */
+    --bg: radial-gradient(circle at 88% 6%, rgba(180, 150, 255, 0.3), transparent 42%),
+      radial-gradient(circle at 10% 85%, rgba(130, 180, 255, 0.12), transparent 50%),
+      linear-gradient(165deg, #100d20 0%, #1a1434 55%, #231a40 100%);
+    --card-bg: rgba(255, 255, 255, 0.055);
+    --card-border: rgba(201, 184, 255, 0.22);
+    --card-shadow: 0 0 24px rgba(130, 100, 220, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    --text: #ece7fb;
+    --text-heading: #ece7fb;
+    --text-muted: #9d90c9;
+    --accent: #c9b8ff;
+    --accent-glow: rgba(180, 150, 255, 0.5);
+    --accent-soft: rgba(180, 150, 255, 0.14);
+    --accent-border: rgba(201, 184, 255, 0.3);
+    --nav-bg: rgba(16, 13, 32, 0.75);
+    --nav-border: rgba(201, 184, 255, 0.18);
+    --sky-particle: #ffffff;
+    --scanline: rgba(255, 255, 255, 0.025);
+
+    color-scheme: dark;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: var(--font-body), system-ui, sans-serif;
 }

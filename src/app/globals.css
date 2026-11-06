@@ -138,6 +138,62 @@ body {
   padding: 0.5rem 0.625rem;
 }
 
+.chip-muted {
+  color: var(--text-muted);
+  background: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+/* ---------- Today page: quote hero and theme "why" cards ---------- */
+
+.quote-text {
+  font-family: var(--font-display), serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.1875rem;
+  line-height: 1.45;
+  color: var(--text-heading);
+}
+
+.why-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 0.5rem 0.625rem;
+}
+
+.why-row p {
+  margin: 0;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-style: normal;
+}
+
+.why-badge {
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.625rem;
+  letter-spacing: 0.05em;
+  padding: 0.125rem 0.375rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.why-badge.lift {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+}
+
+.why-badge.ease {
+  color: var(--text-muted);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+}
+
 .btn {
   display: inline-flex;
   align-items: center;

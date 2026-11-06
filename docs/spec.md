@@ -69,15 +69,15 @@ All fields validate together on submit ("Reveal my chart"), showing inline error
 - Link: "Add or fix birth details" → onboarding with values prefilled.
 
 ### 3.4 Today (`/`, the home screen)
-- Greeting ("Hi, {name}") when a name was given, then the date and "Today's themes" list.
-- **Reading card:** title, 80–120 word reading, one practical tip. Loading skeleton while fetching.
-- **Go gently today:** as of 2026-11-03, the day's caution categories (same list used for the −1 scoring factor), each with the specific aspect or retrograde that flagged it (e.g. "Money — Venus square your Saturn; Venus is retrograde."). Hidden entirely when `caution` is empty.
-- **Best for today:** top 3 ranked tasks, each with a short reason ("Good day for calls: Mercury trine your Sun").
-- **Bad for today:** as of 2026-11-03, open tasks (ranked below the top 3) whose category is in today's caution list, each shown with the caution reason ("Go gently: try a 15-minute first step"). Hidden entirely when nothing matches.
-- **Everything else:** remaining open tasks in ranked order (excludes anything already shown in Bad for today).
-- Every task's points chip (`PointsChip` component) shows a hover/focus breakdown of every scoring factor that contributed to its score, not just the single top reason — backed by `RankedTask.factors` in `src/lib/planner/rank.ts`.
-- Check off tasks inline; "Add task" button opens the add form as a modal (same `TaskFormModal` Tasks uses).
+As of 2026-11-06, redesigned around a short pull-quote hero and a tabbed task list, to cut the scroll distance to "Best for today":
+- **Header:** date first ("Friday · November 6", via Luxon), then "Hi, {name}" when a name was given. No arch-card/glyph on this screen (kept on Onboarding, Chart, Settings).
+- **Quote hero:** the reading's one-line tip as an italic pull-quote, loading state while fetching. A "Read the full reading ›" toggle expands in place to show the full 80–120 word reading, then a "why" list — one card per today's theme and caution (LIFT/EASE badge), each a plain-language sentence built by `src/lib/astro/explain.ts`: "{Planet} says {saying}, which lifts/touches {Category} because {reason}." No astrology jargon, no houses/rising mentioned (rule 8). Toggles back via "Show less ‹".
+- **Mood line:** one sentence below the quote — "Today favors A, B, and C — go gently on D, E, and F" — from the same theme/caution data (good themes bold, caution ones italic). Caution categories already shown as a "today's theme" are omitted here (a category can be both boosted and cautioned by different planets; showing it in both reads as a contradiction, though the −1 still applies to scoring either way).
+- **Tabs:** "Best (N)", "Caution (N)", "All (N)" — replaces the old stacked Best/Bad/Everything-else sections. Best = top 3 ranked tasks; Caution = open tasks (ranked below the top 3) whose category is in today's caution list; All = every open task in ranked order. Each task row shows a plain-language tier chip instead of a raw point value — Best/Better/Good for the top 3, Gentle for caution tasks, Open for the rest — still backed by the real score, with the numeric breakdown available on hover/focus.
+- Check off tasks inline; "Add task" button (next to the tabs) opens the add form as a modal (same `TaskFormModal` Tasks uses).
 - Error and limit states in section 8.4.
+
+`PointsChip` (`src/components/PointsChip.tsx`) takes optional `label`/`muted` props for the tier-word style above; Tasks (3.5) doesn't pass them and keeps its numeric `PTS` chip. The hover/focus popover itself is plain-language on both screens now — a bulleted list of `RankedTask.factors[].reason` text, no point values — backed by `RankedTask.factors` in `src/lib/planner/rank.ts`.
 
 ### 3.5 Tasks (`/tasks`)
 - Full list: open tasks first, then completed (last 7 days). As of 2026-11-03, a "Sort by" toggle (shown once birth data exists) switches the open-task order between due date and today's points — same scoring as Today, with the same points chip and hover/focus breakdown on each open task. Completed tasks stay at the end either way.
@@ -281,7 +281,7 @@ interface RankedTask {
 
 Ties: earlier due date first, then oldest `createdAt`. Completed tasks are excluded.
 
-**Reasons** (top 3 only), from the strongest factor: "Due today", "Overdue since Mon", "Good day for calls: Mercury trine your Sun", "Go gently: try a 15-minute first step".
+**Reasons** (top 3 only), from the strongest factor: "Due today", "Overdue since Mon", "Calls & messages is favored today", "Go gently on Calls & messages today". As of 2026-11-06, the theme-match and caution reasons are plain-language (`shortThemeReason` in `src/lib/astro/explain.ts`) rather than raw aspect text — the full astrology detail still lives in `DayThemes.themes[].reasons`/`caution[].reasons` and surfaces in Today's "why" list (3.4) instead.
 
 Write the tests first: one test per factor, plus ties and an empty list.
 

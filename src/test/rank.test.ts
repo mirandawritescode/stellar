@@ -56,7 +56,7 @@ describe("rankTasks — factor 3: due in the next 3 days", () => {
 });
 
 describe("rankTasks — factor 4: category matches a day theme", () => {
-  it("adds the theme's strength times 2, and uses the theme's own reason text", () => {
+  it("adds the theme's strength times 2, with a plain-language reason", () => {
     const day: DayThemes = {
       date: TODAY,
       themes: [{ theme: "communication", strength: 3, reasons: ["Mercury trine your Sun"] }],
@@ -66,7 +66,7 @@ describe("rankTasks — factor 4: category matches a day theme", () => {
     const t = task({ id: "a", category: "communication" });
     const [ranked] = rankTasks([t], day, TODAY);
     expect(ranked.score).toBe(6);
-    expect(ranked.reason).toBe("Good day for calls & messages: Mercury trine your Sun");
+    expect(ranked.reason).toBe("Calls & messages is favored today");
   });
 });
 
@@ -81,7 +81,7 @@ describe("rankTasks — factor 5: category is in caution", () => {
     const t = task({ id: "a", category: "social" });
     const [ranked] = rankTasks([t], day, TODAY);
     expect(ranked.score).toBe(-1);
-    expect(ranked.reason).toBe("Go gently: try a 15-minute first step");
+    expect(ranked.reason).toBe("Go gently on Social today");
   });
 });
 
@@ -179,7 +179,7 @@ describe("rankTasks — other behavior", () => {
     const t = task({ id: "a", category: "creative", dueDate: "2026-11-04" });
     const [ranked] = rankTasks([t], day, TODAY);
     expect(ranked.score).toBe(8); // 2 (due soon) + 6 (strength 3 x 2)
-    expect(ranked.reason).toBe("Good day for creative: Venus trine your Moon");
+    expect(ranked.reason).toBe("Creative is favored today");
   });
 
   it("exposes every scoring factor, strongest first, for the full breakdown", () => {
@@ -198,7 +198,7 @@ describe("rankTasks — other behavior", () => {
     const [ranked] = rankTasks([t], day, TODAY);
     expect(ranked.factors).toEqual([
       { points: 4, reason: "Due today" },
-      { points: 4, reason: "Good day for calls & messages: Mercury trine your Sun" },
+      { points: 4, reason: "Calls & messages is favored today" },
       { points: 1, reason: "It's been sitting a while" },
     ]);
   });

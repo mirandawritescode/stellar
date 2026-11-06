@@ -1,14 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import ArchGlyph from "@/components/ArchGlyph";
+import { DateTime } from "luxon";
 import PointsChip from "@/components/PointsChip";
 import TaskFormModal from "@/components/TaskFormModal";
 import { computeNatalChart } from "@/lib/astro/natal";
 import { computeTransits, localNoonToday } from "@/lib/astro/transits";
 import { computeDayThemes } from "@/lib/astro/themes";
+import { explainCaution, explainGoodTheme } from "@/lib/astro/explain";
 import { CAUTION_REASON, rankTasks } from "@/lib/planner/rank";
+import type { RankedTask } from "@/lib/planner/rank";
 import { buildFallbackReading } from "@/lib/reading";
 import type { ReadingContext } from "@/lib/reading";
 import { loadBirthData } from "@/lib/storage/birthData";
@@ -16,6 +19,33 @@ import { loadCachedReading, saveCachedReading } from "@/lib/storage/reading";
 import { loadTasks, saveTasks } from "@/lib/storage/tasks";
 import { TASK_CATEGORY_LABELS } from "@/lib/types";
 import type { BirthData, DailyReading, Task } from "@/lib/types";
+
+type Tab = "best" | "caution" | "all";
+
+function tierFor(taskId: string, index: number, cautionIds: Set<string>): { label: string; muted: boolean } {
+  if (cautionIds.has(taskId)) return { label: "Gentle", muted: true };
+  if (index === 0) return { label: "Best", muted: false };
+  if (index === 1) return { label: "Better", muted: false };
+  if (index === 2) return { label: "Good", muted: false };
+  return { label: "Open", muted: true };
+}
+
+// Oxford-comma joiner for the mood line: "A", "A and B", "A, B, and C".
+function joinLabels(labels: string[], itemClassName: string): ReactNode[] {
+  return labels.map((label, i) => {
+    let separator = "";
+    if (i > 0) {
+      const isLast = i === labels.length - 1;
+      separator = isLast ? (labels.length === 2 ? " and " : ", and ") : ", ";
+    }
+    return (
+      <span key={label}>
+        {separator}
+        <span className={itemClassName}>{label}</span>
+      </span>
+    );
+  });
+}
 
 export default function TodayPage() {
   const router = useRouter();
@@ -26,6 +56,8 @@ export default function TodayPage() {
   const [tasks, setTasks] = useState<Task[] | undefined>(undefined);
   const [addingTask, setAddingTask] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [quoteExpanded, setQuoteExpanded] = useState(false);
+  const [tab, setTab] = useState<Tab>("best");
 
   useEffect(() => {
     const data = loadBirthData();
@@ -141,6 +173,29 @@ export default function TodayPage() {
     setAddingTask(false);
   }
 
+  function renderTaskRow(r: RankedTask, tier: { label: string; muted: boolean }, note?: string) {
+    return (
+      <li key={r.task.id} className="glass-card flex items-center gap-1 px-1 py-1">
+        <label className="flex h-11 w-11 flex-shrink-0 items-center justify-center">
+          <input
+            type="checkbox"
+            checked={r.task.done}
+            onChange={() => handleToggleDone(r.task)}
+            className="h-5 w-5"
+            aria-label={`Mark "${r.task.title}" done`}
+          />
+        </label>
+        <div className="min-h-[44px] flex-1 py-2">
+          <p className="text-sm font-medium">{r.task.title}</p>
+          <p className="text-muted text-xs">{TASK_CATEGORY_LABELS[r.task.category]}</p>
+          {r.reason && <p className="text-accent text-xs">{r.reason}</p>}
+          {note && <p className="text-muted text-xs italic">{note}</p>}
+        </div>
+        <PointsChip score={r.score} factors={r.factors} label={tier.label} muted={tier.muted} />
+      </li>
+    );
+  }
+
   // A category can be both boosted (from one planet's harmonious aspect) and
   // flagged caution (from a different planet's challenging aspect) at once —
   // real, independently-tracked signals, but showing a theme as both "today's
@@ -152,152 +207,150 @@ export default function TodayPage() {
 
   const ranked = rankTasks(tasks, dayThemes, dayThemes.date);
   const bestForToday = ranked.slice(0, 3);
-  const remaining = ranked.slice(3);
-  const badForToday = remaining.filter((r) => dayThemes.caution.some((c) => c.theme === r.task.category));
-  const badIds = new Set(badForToday.map((r) => r.task.id));
-  const everythingElse = remaining.filter((r) => !badIds.has(r.task.id));
+  const badForToday = ranked.slice(3).filter((r) => dayThemes.caution.some((c) => c.theme === r.task.category));
+  const cautionIds = new Set(badForToday.map((r) => r.task.id));
+
+  const goodLabels = dayThemes.themes.map((t) => TASK_CATEGORY_LABELS[t.theme]);
+  const cautionLabels = cautionToShow.map((c) => TASK_CATEGORY_LABELS[c.theme]);
+
+  const whyRows = [
+    ...dayThemes.themes.map((t) => ({
+      key: `good-${t.theme}`,
+      badge: "lift" as const,
+      explanation: explainGoodTheme(t),
+    })),
+    ...cautionToShow.map((c) => ({
+      key: `caution-${c.theme}`,
+      badge: "ease" as const,
+      explanation: explainCaution(c),
+    })),
+  ];
+
+  const today = DateTime.fromISO(dayThemes.date);
+  const dateLabel = `${today.toFormat("cccc")} · ${today.toFormat("LLLL d")}`;
 
   return (
     <div className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-4 p-6">
-      {birthData.name && <h1 className="heading-display text-center text-xl">Hi, {birthData.name}</h1>}
-      <p className="section-label text-center">Today &middot; {dayThemes.date}</p>
-
       {saveError && <p className="text-error text-sm">{saveError}</p>}
 
       {addingTask && <TaskFormModal onClose={() => setAddingTask(false)} onSave={handleAddTask} />}
 
-      <section className="arch-card flex flex-col gap-2">
-        <ArchGlyph />
-        {readingLoading && !reading && (
-          <p className="text-muted text-center text-sm">Loading today&apos;s reading...</p>
-        )}
+      <section className="flex flex-col items-center gap-2 text-center">
+        <p className="section-label">{dateLabel}</p>
+        {birthData.name && <h1 className="heading-display text-xl">Hi, {birthData.name}</h1>}
+
+        {readingLoading && !reading && <p className="text-muted text-sm">Loading today&apos;s reading...</p>}
+
         {reading && (
           <>
-            <h2 className="heading-display text-center text-xl">{reading.title}</h2>
-            <p className="text-sm leading-relaxed">{reading.reading}</p>
-            <p className="text-sm font-medium">{reading.tip}</p>
-            {reading.source === "fallback" && (
-              <p className="text-muted text-xs">
-                Today&apos;s full reading is taking a break; here&apos;s your quick guide.
-              </p>
+            <p className="quote-text">&ldquo;{reading.tip}&rdquo;</p>
+            <button
+              type="button"
+              onClick={() => setQuoteExpanded((v) => !v)}
+              className="text-accent text-xs font-medium"
+            >
+              {quoteExpanded ? "Show less ‹" : "Read the full reading ›"}
+            </button>
+
+            {quoteExpanded && (
+              <div className="flex w-full flex-col gap-3 text-left">
+                <p className="text-sm leading-relaxed">{reading.reading}</p>
+                {whyRows.length > 0 && (
+                  <ul className="flex flex-col gap-1.5">
+                    {whyRows.map((row) => (
+                      <li key={row.key} className="why-row">
+                        <span className={`why-badge ${row.badge}`}>{row.badge === "lift" ? "LIFT" : "EASE"}</span>
+                        <p className="text-sm">
+                          <b>{row.explanation.planetLabel}</b> says {row.explanation.saying}, which{" "}
+                          {row.badge === "lift" ? "lifts" : "touches"}{" "}
+                          <b>{TASK_CATEGORY_LABELS[row.explanation.theme]}</b> because {row.explanation.because}.
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {reading.source === "fallback" && (
+                  <p className="text-muted text-xs">
+                    Today&apos;s full reading is taking a break; here&apos;s your quick guide.
+                  </p>
+                )}
+              </div>
             )}
           </>
         )}
+
+        {(goodLabels.length > 0 || cautionLabels.length > 0) && (
+          <p className="text-muted px-1 text-sm leading-relaxed">
+            {goodLabels.length > 0 && <>Today favors {joinLabels(goodLabels, "text-accent font-medium")}</>}
+            {goodLabels.length > 0 && cautionLabels.length > 0 && " — "}
+            {cautionLabels.length > 0 && <>go gently on {joinLabels(cautionLabels, "italic")}</>}.
+          </p>
+        )}
       </section>
 
-      <section className="flex flex-col gap-2">
-        <h2 className="section-label">Today&apos;s themes</h2>
-        <ul className="flex flex-col gap-1">
-          {dayThemes.themes.map((t) => (
-            <li key={t.theme} className="glass-card flex items-center justify-between px-4 py-3">
-              <div>
-                <p className="text-sm font-medium">{TASK_CATEGORY_LABELS[t.theme]}</p>
-                <p className="text-muted text-xs">{t.reasons.join("; ")}</p>
-              </div>
-              <span className="chip">STR {String(t.strength).padStart(2, "0")}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {cautionToShow.length > 0 && (
-        <section className="flex flex-col gap-2">
-          <h2 className="section-label">Go gently today</h2>
-          <ul className="flex flex-col gap-1">
-            {cautionToShow.map((c) => (
-              <li key={c.theme} className="glass-card px-4 py-3">
-                <p className="text-sm font-medium">{TASK_CATEGORY_LABELS[c.theme]}</p>
-                <p className="text-muted text-xs">{c.reasons.join("; ")}</p>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      <div className="flex items-center justify-between">
-        <h2 className="section-label">Best for today</h2>
-        <button type="button" onClick={() => setAddingTask(true)} className="btn">
+      <div className="flex items-center justify-between gap-2">
+        <div className="window-picker">
+          <button
+            type="button"
+            onClick={() => setTab("best")}
+            className={`window-pill ${tab === "best" ? "selected" : ""}`}
+          >
+            Best ({bestForToday.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab("caution")}
+            className={`window-pill ${tab === "caution" ? "selected" : ""}`}
+          >
+            Caution ({badForToday.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab("all")}
+            className={`window-pill ${tab === "all" ? "selected" : ""}`}
+          >
+            All ({ranked.length})
+          </button>
+        </div>
+        <button type="button" onClick={() => setAddingTask(true)} className="btn flex-shrink-0">
           Add task
         </button>
       </div>
 
-      {bestForToday.length === 0 ? (
+      {ranked.length === 0 ? (
         <p className="text-muted text-sm">No open tasks yet. Add your first one to get started.</p>
       ) : (
-        <ul className="flex flex-col gap-1">
-          {bestForToday.map(({ task, score, reason, factors }) => (
-            <li key={task.id} className="glass-card flex items-center gap-1 px-1 py-1">
-              <label className="flex h-11 w-11 flex-shrink-0 items-center justify-center">
-                <input
-                  type="checkbox"
-                  checked={task.done}
-                  onChange={() => handleToggleDone(task)}
-                  className="h-5 w-5"
-                  aria-label={`Mark "${task.title}" done`}
-                />
-              </label>
-              <div className="min-h-[44px] flex-1 py-2">
-                <p className="text-sm font-medium">{task.title}</p>
-                <p className="text-muted text-xs">{TASK_CATEGORY_LABELS[task.category]}</p>
-                {reason && <p className="text-accent text-xs">{reason}</p>}
-              </div>
-              <PointsChip score={score} factors={factors} />
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {badForToday.length > 0 && (
-        <section className="flex flex-col gap-2">
-          <h2 className="section-label">Bad for today</h2>
-          <ul className="flex flex-col gap-1">
-            {badForToday.map(({ task, score, factors }) => (
-              <li key={task.id} className="glass-card flex items-center gap-1 px-1 py-1">
-                <label className="flex h-11 w-11 flex-shrink-0 items-center justify-center">
-                  <input
-                    type="checkbox"
-                    checked={task.done}
-                    onChange={() => handleToggleDone(task)}
-                    className="h-5 w-5"
-                    aria-label={`Mark "${task.title}" done`}
-                  />
-                </label>
-                <div className="min-h-[44px] flex-1 py-2">
-                  <p className="text-sm font-medium">{task.title}</p>
-                  <p className="text-muted text-xs">{TASK_CATEGORY_LABELS[task.category]}</p>
-                  <p className="text-muted text-xs italic">{CAUTION_REASON}</p>
-                </div>
-                <PointsChip score={score} factors={factors} />
-              </li>
+        <>
+          {tab === "best" &&
+            (bestForToday.length === 0 ? (
+              <p className="text-muted text-sm">No open tasks yet. Add your first one to get started.</p>
+            ) : (
+              <ul className="flex flex-col gap-1">
+                {bestForToday.map((r, i) => renderTaskRow(r, tierFor(r.task.id, i, cautionIds)))}
+              </ul>
             ))}
-          </ul>
-        </section>
-      )}
 
-      {everythingElse.length > 0 && (
-        <section className="flex flex-col gap-2">
-          <h2 className="section-label">Everything else</h2>
-          <ul className="flex flex-col gap-1">
-            {everythingElse.map(({ task, score, factors }) => (
-              <li key={task.id} className="glass-card flex items-center gap-1 px-1 py-1">
-                <label className="flex h-11 w-11 flex-shrink-0 items-center justify-center">
-                  <input
-                    type="checkbox"
-                    checked={task.done}
-                    onChange={() => handleToggleDone(task)}
-                    className="h-5 w-5"
-                    aria-label={`Mark "${task.title}" done`}
-                  />
-                </label>
-                <div className="min-h-[44px] flex-1 py-2">
-                  <p className="text-sm">{task.title}</p>
-                  <p className="text-muted text-xs">{TASK_CATEGORY_LABELS[task.category]}</p>
-                </div>
-                <PointsChip score={score} factors={factors} />
-              </li>
+          {tab === "caution" &&
+            (badForToday.length === 0 ? (
+              <p className="text-muted text-sm">Nothing to go gently on today.</p>
+            ) : (
+              <ul className="flex flex-col gap-1">
+                {badForToday.map((r) => renderTaskRow(r, { label: "Gentle", muted: true }, CAUTION_REASON))}
+              </ul>
             ))}
-          </ul>
-        </section>
+
+          {tab === "all" && (
+            <ul className="flex flex-col gap-1">
+              {ranked.map((r, i) =>
+                renderTaskRow(
+                  r,
+                  tierFor(r.task.id, i, cautionIds),
+                  cautionIds.has(r.task.id) ? CAUTION_REASON : undefined,
+                ),
+              )}
+            </ul>
+          )}
+        </>
       )}
 
       <p className="text-muted text-sm">Moon phase &middot; {dayThemes.moonPhase}</p>

@@ -1,4 +1,4 @@
-import { TASK_CATEGORY_LABELS } from "@/lib/types";
+import { shortThemeReason } from "@/lib/astro/explain";
 import type { DayThemes, Task } from "@/lib/types";
 
 export interface ScoreFactor {
@@ -66,13 +66,10 @@ function computeFactors(task: Task, day: DayThemes, today: string): ScoringFacto
 
   const matchingTheme = day.themes.find((t) => t.theme === task.category);
   if (matchingTheme) {
-    const points = matchingTheme.strength * THEME_MATCH_MULTIPLIER;
-    const themeReason = matchingTheme.reasons[0];
-    const label = TASK_CATEGORY_LABELS[task.category].toLowerCase();
     factors.push({
-      points,
+      points: matchingTheme.strength * THEME_MATCH_MULTIPLIER,
       priority: 3,
-      reason: themeReason ? `Good day for ${label}: ${themeReason}` : `Good day for ${label}`,
+      reason: shortThemeReason(task.category, "good"),
     });
   }
 
@@ -80,7 +77,7 @@ function computeFactors(task: Task, day: DayThemes, today: string): ScoringFacto
     factors.push({
       points: CAUTION_POINTS,
       priority: 4,
-      reason: CAUTION_REASON,
+      reason: shortThemeReason(task.category, "caution"),
     });
   }
 

@@ -28,8 +28,14 @@
   --font-sans: var(--font-body);
 }
 
+/*
+ * Night tokens apply in two cases: the OS prefers dark and the user hasn't
+ * forced Day (the media-query block), or the user explicitly forced Night
+ * regardless of the OS (the attribute block). Settings' theme toggle sets
+ * data-theme="light" | "dark" on <html>, or removes it entirely for "Auto".
+ */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     /* Night — deep indigo-violet, periwinkle glow */
     --bg: radial-gradient(circle at 88% 6%, rgba(180, 150, 255, 0.3), transparent 42%),
       radial-gradient(circle at 10% 85%, rgba(130, 180, 255, 0.12), transparent 50%),
@@ -53,6 +59,31 @@
 
     color-scheme: dark;
   }
+}
+
+:root[data-theme="dark"] {
+  /* Night — deep indigo-violet, periwinkle glow (forced, any OS setting) */
+  --bg: radial-gradient(circle at 88% 6%, rgba(180, 150, 255, 0.3), transparent 42%),
+    radial-gradient(circle at 10% 85%, rgba(130, 180, 255, 0.12), transparent 50%),
+    linear-gradient(165deg, #100d20 0%, #1a1434 55%, #231a40 100%);
+  --card-bg: rgba(255, 255, 255, 0.055);
+  --card-border: rgba(201, 184, 255, 0.22);
+  --card-shadow: 0 0 24px rgba(130, 100, 220, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --text: #ece7fb;
+  --text-heading: #ece7fb;
+  --text-muted: #9d90c9;
+  --accent: #c9b8ff;
+  --accent-glow: rgba(180, 150, 255, 0.5);
+  --accent-soft: rgba(180, 150, 255, 0.14);
+  --accent-border: rgba(201, 184, 255, 0.3);
+  --nav-bg: rgba(16, 13, 32, 0.75);
+  --nav-border: rgba(201, 184, 255, 0.18);
+  --popover-bg: rgba(20, 16, 38, 0.97);
+  --sky-particle: #ffffff;
+  --scanline: rgba(255, 255, 255, 0.025);
+  --error: #f0829b;
+
+  color-scheme: dark;
 }
 
 body {
@@ -311,13 +342,21 @@ input[type="radio"] {
 }
 
 @media (prefers-color-scheme: dark) {
-  .sky-stars {
+  :root:not([data-theme="light"]) .sky-stars {
     display: block;
   }
 
-  .sky-clouds {
+  :root:not([data-theme="light"]) .sky-clouds {
     display: none;
   }
+}
+
+:root[data-theme="dark"] .sky-stars {
+  display: block;
+}
+
+:root[data-theme="dark"] .sky-clouds {
+  display: none;
 }
 
 .star {

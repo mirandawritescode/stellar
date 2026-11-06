@@ -1,8 +1,18 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, IBM_Plex_Mono, Inter } from "next/font/google";
+import Script from "next/script";
 import BottomNav from "@/components/BottomNav";
 import Sky from "@/components/Sky";
 import "./globals.css";
+
+// Keep in sync with THEME_STORAGE_KEY in src/lib/storage/theme.ts — this
+// runs before any app code loads, so it can't import the constant.
+const THEME_INIT_SCRIPT = `
+  try {
+    var t = localStorage.getItem("ap:theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+`;
 
 const cormorantGaramond = Cormorant_Garamond({
   variable: "--font-display",
@@ -40,8 +50,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`${cormorantGaramond.variable} ${inter.variable} ${ibmPlexMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-screen flex flex-col">
+        <Script id="theme-init" strategy="beforeInteractive">
+          {THEME_INIT_SCRIPT}
+        </Script>
         <Sky />
         <main className="flex flex-1 flex-col">{children}</main>
         <BottomNav />

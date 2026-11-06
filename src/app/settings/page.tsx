@@ -1,14 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ArchGlyph from "@/components/ArchGlyph";
 import { clearAllData } from "@/lib/storage/reset";
+import { loadThemePreference, saveThemePreference } from "@/lib/storage/theme";
+import type { ThemePreference } from "@/lib/storage/theme";
 
 export default function SettingsPage() {
   const router = useRouter();
   const [confirming, setConfirming] = useState(false);
   const [resetError, setResetError] = useState<string | null>(null);
+  const [theme, setTheme] = useState<ThemePreference | undefined>(undefined);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing from localStorage, a browser-only external system unavailable during SSR
+    setTheme(loadThemePreference());
+  }, []);
+
+  function handleThemeChange(next: ThemePreference) {
+    setTheme(next);
+    saveThemePreference(next);
+  }
 
   function handleReset() {
     try {
@@ -22,6 +35,39 @@ export default function SettingsPage() {
   return (
     <div className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-4 p-6">
       <h1 className="heading-display text-center text-lg">Settings</h1>
+
+      <section className="glass-card mx-auto flex w-full max-w-[360px] flex-col items-center gap-3 p-5 text-center">
+        <p className="section-label">Appearance</p>
+        {theme !== undefined && (
+          <div className="window-picker w-full max-w-[260px]">
+            <button
+              type="button"
+              onClick={() => handleThemeChange("auto")}
+              aria-pressed={theme === "auto"}
+              className={`window-pill ${theme === "auto" ? "selected" : ""}`}
+            >
+              Auto
+            </button>
+            <button
+              type="button"
+              onClick={() => handleThemeChange("light")}
+              aria-pressed={theme === "light"}
+              className={`window-pill ${theme === "light" ? "selected" : ""}`}
+            >
+              Day
+            </button>
+            <button
+              type="button"
+              onClick={() => handleThemeChange("dark")}
+              aria-pressed={theme === "dark"}
+              className={`window-pill ${theme === "dark" ? "selected" : ""}`}
+            >
+              Night
+            </button>
+          </div>
+        )}
+        <p className="text-muted text-xs">Auto follows your system&apos;s light/dark setting.</p>
+      </section>
 
       <section className="arch-card mx-auto flex w-full max-w-[360px] flex-col items-center gap-3 text-center">
         <ArchGlyph />

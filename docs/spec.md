@@ -333,7 +333,7 @@ Built in M7: manifest and icons via Next.js's own file conventions (`src/app/man
 
 ## 11. Design
 
-- **Desktop-first, responsive down to phone widths.** Single column, max content width 720px, centered; the same layout reflows to fit narrow screens without overflowing or breaking (verified down to 320px). A dedicated mobile-first redesign — its own small-screen layout/UX, not just "doesn't break" — is deferred to a later pass; see section 14.
+- **Desktop-first, responsive down to phone widths.** Single column, max content width 640px, centered; the same layout reflows to fit narrow screens without overflowing or breaking (verified down to 320px). A dedicated mobile-first redesign — its own small-screen layout/UX, not just "doesn't break" — is deferred to a later pass; see section 14.
 - **"Night" and "Day," not generic light/dark.** Defaults to `prefers-color-scheme` (dark → Night, light → Day). As of 2026-11-06, Settings → Appearance has an Auto/Day/Night override (`data-theme` on `<html>`, stored in `localStorage` as `ap:theme`; a `beforeInteractive` script applies it before first paint so there's no flash on reload):
   - **Night**: deep indigo-violet gradient background (`#100d20` → `#1a1434` → `#231a40`), a twinkling star field, periwinkle/lavender glow accent (`#c9b8ff`).
   - **Day**: sunrise gradient background (`#f1e3ee` → `#fbdccb` → `#ffd9a0`), slowly drifting clouds instead of stars, warm gold/coral glow accent (`#d98a4f`).

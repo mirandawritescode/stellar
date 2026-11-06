@@ -140,7 +140,7 @@ export default function TodayPage() {
 
   if (!ready || !birthData || !dayThemes || tasks === undefined) {
     return (
-      <div className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-4 p-6">
+      <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 p-6">
         <p className="text-muted text-sm">Loading...</p>
       </div>
     );
@@ -230,13 +230,14 @@ export default function TodayPage() {
   const dateLabel = `${today.toFormat("cccc")} · ${today.toFormat("LLLL d")}`;
 
   return (
-    <div className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-4 p-6">
+    <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 p-6">
       {saveError && <p className="text-error text-sm">{saveError}</p>}
 
       {addingTask && <TaskFormModal onClose={() => setAddingTask(false)} onSave={handleAddTask} />}
 
       <section className="flex flex-col items-center gap-2 text-center">
         <p className="section-label">{dateLabel}</p>
+        <p className="text-muted text-xs">Moon phase &middot; {dayThemes.moonPhase}</p>
         {birthData.name && <h1 className="heading-display text-xl">Hi, {birthData.name}</h1>}
 
         {readingLoading && !reading && <p className="text-muted text-sm">Loading today&apos;s reading...</p>}
@@ -259,12 +260,12 @@ export default function TodayPage() {
                   <ul className="flex flex-col gap-1.5">
                     {whyRows.map((row) => (
                       <li key={row.key} className="why-row">
-                        <span className={`why-badge ${row.badge}`}>{row.badge === "lift" ? "LIFT" : "EASE"}</span>
                         <p className="text-sm">
                           <b>{row.explanation.planetLabel}</b> says {row.explanation.saying}, which{" "}
                           {row.badge === "lift" ? "lifts" : "touches"}{" "}
                           <b>{TASK_CATEGORY_LABELS[row.explanation.theme]}</b> because {row.explanation.because}.
                         </p>
+                        <span className={`why-badge ${row.badge}`}>{row.badge === "lift" ? "LIFT" : "EASE"}</span>
                       </li>
                     ))}
                   </ul>
@@ -288,7 +289,7 @@ export default function TodayPage() {
         )}
       </section>
 
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex justify-center">
         <div className="window-picker">
           <button
             type="button"
@@ -312,9 +313,6 @@ export default function TodayPage() {
             All ({ranked.length})
           </button>
         </div>
-        <button type="button" onClick={() => setAddingTask(true)} className="btn flex-shrink-0">
-          Add task
-        </button>
       </div>
 
       {ranked.length === 0 ? (
@@ -353,7 +351,11 @@ export default function TodayPage() {
         </>
       )}
 
-      <p className="text-muted text-sm">Moon phase &middot; {dayThemes.moonPhase}</p>
+      <p className="text-center">
+        <button type="button" onClick={() => setAddingTask(true)} className="text-accent text-sm font-medium">
+          + Add task
+        </button>
+      </p>
     </div>
   );
 }

@@ -67,7 +67,7 @@ docs/               spec, project plan, decision notes
 
 - TypeScript strict; no `any`. Shared types live in `src/lib/types.ts`.
 - Astrology and planner logic are **pure functions** in `src/lib/`, with Vitest tests. UI components stay thin.
-- Desktop-first, responsive down to phone widths (single column, max content width 720px, reflows without overflowing at narrow sizes); accessible color contrast; semantic HTML. A dedicated mobile-first layout/UX is deferred — see spec section 11 and 14.
+- Desktop-first, responsive down to phone widths (single column, max content width 640px, reflows without overflowing at narrow sizes); accessible color contrast; semantic HTML. A dedicated mobile-first layout/UX is deferred — see spec section 11 and 14.
 - Handle loading, empty and error states on every screen.
 - Dates: store ISO strings; do time-zone math with Luxon, never with raw `Date` offsets.
 

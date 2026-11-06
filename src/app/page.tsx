@@ -141,6 +141,15 @@ export default function TodayPage() {
     setAddingTask(false);
   }
 
+  // A category can be both boosted (from one planet's harmonious aspect) and
+  // flagged caution (from a different planet's challenging aspect) at once —
+  // real, independently-tracked signals, but showing a theme as both "today's
+  // theme" and "go gently" reads as a contradiction. Since it's already
+  // surfaced positively above, drop it from the caution list here rather than
+  // double-list it; the -1 still applies to task scoring either way.
+  const topThemeKeys = new Set(dayThemes.themes.map((t) => t.theme));
+  const cautionToShow = dayThemes.caution.filter((c) => !topThemeKeys.has(c.theme));
+
   const ranked = rankTasks(tasks, dayThemes, dayThemes.date);
   const bestForToday = ranked.slice(0, 3);
   const remaining = ranked.slice(3);
@@ -191,11 +200,11 @@ export default function TodayPage() {
         </ul>
       </section>
 
-      {dayThemes.caution.length > 0 && (
+      {cautionToShow.length > 0 && (
         <section className="flex flex-col gap-2">
           <h2 className="section-label">Go gently today</h2>
           <ul className="flex flex-col gap-1">
-            {dayThemes.caution.map((c) => (
+            {cautionToShow.map((c) => (
               <li key={c.theme} className="glass-card px-4 py-3">
                 <p className="text-sm font-medium">{TASK_CATEGORY_LABELS[c.theme]}</p>
                 <p className="text-muted text-xs">{c.reasons.join("; ")}</p>

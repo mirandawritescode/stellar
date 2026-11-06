@@ -1,29 +1,30 @@
-<!-- Replace everything in [brackets] as the project takes shape. -->
-
 # Astro Planner
 
 **Your to-do list, arranged around your star chart.**
 
-Astro Planner reads your natal chart and the day's planetary transits, writes a short daily reading, and ranks your to-do list for the day.
+Astro Planner reads your natal chart and the day's planetary transits, writes a short daily reading in plain language, and ranks your to-do list for the day.
 
-<!-- Add a 10-second GIF of the Today screen here. It's the first thing reviewers look at. -->
-![Astro Planner demo](docs/screenshots/demo.gif)
+<!-- TODO before sharing: record a fresh 10-second GIF of the Today screen (the current quote-hero + tabs layout) and link it here. It's the first thing reviewers look at. -->
+
+See [`docs/walkthrough.md`](docs/walkthrough.md) for a screenshot tour — note it predates the Today page redesign (quote hero, Best/Caution/All tabs), so the Today screenshots there are out of date.
 
 ---
 
 ## What it does
 
 1. **Set up once.** Enter your birth date, birth time (exact, rough, or unknown) and birth place. The app builds your natal chart.
-2. **Open it each morning.** Get a short reading based on today's transits to your chart.
-3. **See your plan.** Your tasks are ranked for the day, with a one-line reason for the top three.
+2. **Open it each morning.** Get a short reading based on today's transits to your chart, with a plain-language "why" behind each theme — no astrology jargon required.
+3. **See your plan.** Your tasks are ranked for the day across Best / Caution / All tabs, each with a one-word reason (Best, Better, Good, Gentle) backed by the real scoring breakdown on hover.
 
 ## Features
 
 - Natal chart with a simple view and a detailed view
 - Honest about missing birth details: no houses or rising sign without a birth time, and "estimated" labels where a time is rough
-- AI-written daily reading, grounded in calculated transits
-- To-do list with categories and due dates
+- AI-written daily reading, grounded in calculated transits, with the full astrology translated into plain language (no jargon assumed)
+- To-do list with categories and due dates, sortable by due date or today's points
 - Task ranking that combines due dates with the day's astrological themes
+- Night/Day appearance toggle (defaults to following your system setting)
+- Responsive down to phone widths
 - No account needed; everything stays in your browser
 
 ## Tech stack
@@ -55,28 +56,20 @@ flowchart LR
 - **Privacy:** only chart facts go to Groq: no names, no birth place.
 - **Free-tier friendly:** one reading per day, cached in the browser, with a template fallback if Groq's limit is hit.
 
-## Key decisions
-
-Short write-ups of the tradeoffs behind the project live in [`docs/decisions`](docs/decisions):
-
-- [Why a web app instead of a native iPhone app](docs/decisions/001-web-app.md)
-- [Why AI-written readings, and why Groq](docs/decisions/002-ai-readings.md)
-- [Choosing a chart engine](docs/decisions/003-chart-engine.md)
-
 ## Roadmap
 
 v1 is built in eight milestones (see [`docs/spec.md`](docs/spec.md), section 13).
 
 | Milestone | Status |
 | --- | --- |
-| M1. Skeleton | [Not started] |
-| M2. Onboarding | [Not started] |
-| M3. Chart | [Not started] |
-| M4. Tasks | [Not started] |
-| M5. Transits, themes, reading | [Not started] |
-| M6. Ranked plan | [Not started] |
-| M7. Install and polish | [Not started] |
-| M8. Wrap-up | [Not started] |
+| M1. Skeleton | Done |
+| M2. Onboarding | Done |
+| M3. Chart | Done |
+| M4. Tasks | Done |
+| M5. Transits, themes, reading | Done |
+| M6. Ranked plan | Done |
+| M7. Install and polish | Done |
+| M8. Wrap-up | In progress |
 
 Next up after v1: hosting, morning energy check-in, hour-by-hour view, chart wheel, optional sign-in, calendar and push notifications.
 
@@ -110,18 +103,33 @@ npm run check   # lint + type check + tests
 npm test        # tests only
 ```
 
+## Deploying
+
+The app is built to run free on [Vercel's](https://vercel.com) free plan — it's a standard Next.js app with no database, so there's nothing else to provision.
+
+1. Push this repo to GitHub (it's local-only right now — `git remote add origin <your-repo-url>` then `git push -u origin main`).
+2. In Vercel, "Add New Project" and import that repo. The default Next.js build settings work as-is.
+3. In the project's Settings → Environment Variables, add the same three variables from `.env.local` (`GROQ_API_KEY`, `GROQ_MODEL`, `CONTACT_EMAIL`). They're server-only and never reach the browser.
+4. Deploy. Everything else (birth data, tasks, cached readings) lives in each visitor's own browser via localStorage — there's no shared state or accounts to set up.
+
+**Worth knowing before sharing a public link:** the "one reading per user per day" cache is per-browser, not per-deployment. Groq's free tier is a single rate limit shared by everyone who uses your deployed URL, so a public link with real traffic could hit that limit faster than it would locally — not a security issue, just a free-tier ceiling worth watching if usage grows.
+
 ## Project structure
 
 ```
 src/
   app/          pages and server routes (api/reading, api/geocode)
   components/   UI components
-  lib/          chart math, themes, task ranking, storage
+  lib/
+    astro/      natal chart, transits, aspects, themes, plain-language explanations
+    planner/    task scoring
+    storage/    typed localStorage helpers
+    types.ts    shared types
   test/         tests and fixture charts
 docs/
-  spec.md
-  decisions/
-  screenshots/
+  spec.md                   full build spec
+  walkthrough.md            screenshot tour (see note above)
+  walkthrough-screenshots/
 ```
 
 ## Credits
@@ -130,4 +138,6 @@ Place search © OpenStreetMap contributors. Chart calculations by circular-natal
 
 ## About
 
-Built by Mira, a web developer with over a decade of experience in web development and technical documentation. [One line on what you're looking for, e.g. open to front-end roles.]
+Built by Mira, a web developer with over a decade of experience in web development and technical documentation.
+
+<!-- TODO before sharing: add one line on what you're looking for, e.g. "open to front-end roles." -->

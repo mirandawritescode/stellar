@@ -36,6 +36,33 @@ export default function SettingsPage() {
     <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 p-6">
       <h1 className="heading-display text-center text-lg">Settings</h1>
 
+      <section className="arch-card mx-auto flex w-full max-w-[360px] flex-col items-center gap-3 text-center">
+        <ArchGlyph />
+        <p className="section-label">Data</p>
+        <h2 className="heading-display text-lg">Start fresh</h2>
+        {resetError && <p className="text-error text-sm">{resetError}</p>}
+        {confirming ? (
+          <div className="flex flex-col items-center gap-3">
+            <p className="text-sm">
+              This deletes your birth details, tasks, and cached readings from this browser. This
+              can&apos;t be undone.
+            </p>
+            <div className="flex gap-2">
+              <button type="button" onClick={handleReset} className="btn text-error">
+                Yes, delete everything
+              </button>
+              <button type="button" onClick={() => setConfirming(false)} className="btn">
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button type="button" onClick={() => setConfirming(true)} className="btn">
+            Delete all my data
+          </button>
+        )}
+      </section>
+
       <section className="glass-card mx-auto flex w-full max-w-[360px] flex-col items-center gap-3 p-5 text-center">
         <p className="section-label">Appearance</p>
         {theme !== undefined && (
@@ -67,33 +94,6 @@ export default function SettingsPage() {
           </div>
         )}
         <p className="text-muted text-xs">Auto follows your system&apos;s light/dark setting.</p>
-      </section>
-
-      <section className="arch-card mx-auto flex w-full max-w-[360px] flex-col items-center gap-3 text-center">
-        <ArchGlyph />
-        <p className="section-label">Data</p>
-        <h2 className="heading-display text-lg">Start fresh</h2>
-        {resetError && <p className="text-error text-sm">{resetError}</p>}
-        {confirming ? (
-          <div className="flex flex-col items-center gap-3">
-            <p className="text-sm">
-              This deletes your birth details, tasks, and cached readings from this browser. This
-              can&apos;t be undone.
-            </p>
-            <div className="flex gap-2">
-              <button type="button" onClick={handleReset} className="btn text-error">
-                Yes, delete everything
-              </button>
-              <button type="button" onClick={() => setConfirming(false)} className="btn">
-                Cancel
-              </button>
-            </div>
-          </div>
-        ) : (
-          <button type="button" onClick={() => setConfirming(true)} className="btn">
-            Delete all my data
-          </button>
-        )}
       </section>
     </div>
   );

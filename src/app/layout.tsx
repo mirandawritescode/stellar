@@ -34,7 +34,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Astro Planner",
+  title: "Stellar",
   description: "Your to-do list, arranged around your star chart.",
 };
 

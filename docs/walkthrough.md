@@ -1,42 +1,32 @@
 # Astro Planner — Walkthrough
 
-A screenshot tour of every screen in the app, as of 2026-11-03 (through M7). Screenshots are from the Night theme unless noted; see the bottom of this doc for the Day theme.
+A screenshot tour of every screen in the app, as of 2026-11-09 (through M7, plus the Today page redesign and Night/Day toggle built after). Screenshots are from the Night theme unless noted; see the bottom of this doc for the Day theme.
 
 ---
 
-## Onboarding
+## Onboarding (`/onboarding`)
 
-New users answer three questions, one per step, with Back/Next.
+A single scrolling form: name (optional), birth date, birth time (exact, rough, or unknown — an unknown time means no houses or rising sign anywhere in the UI later), and a debounced birth place search against OpenStreetMap Nominatim, with required attribution.
 
-### Step 1 — Birth date
+![Top of the onboarding form: name, birth date, birth time](walkthrough-screenshots/07-onboarding-top.jpg)
 
-![Birth date step](walkthrough-screenshots/07-onboarding-1-birthdate.jpg)
+Choosing "Roughly" reveals a time-of-day picker instead of an exact time; the place search shows live results as you type.
 
-### Step 2 — Birth time
-
-Exact time, a rough window, or "I don't know" — the app adapts later screens to whichever is chosen (an unknown time means no houses or rising sign anywhere in the UI).
-
-![Birth time step, approximate windows shown](walkthrough-screenshots/08-onboarding-2-birthtime.jpg)
-
-### Step 3 — Birth place
-
-A debounced search against OpenStreetMap Nominatim, with required attribution.
-
-![Birth place step with live search results](walkthrough-screenshots/09-onboarding-3-birthplace.jpg)
+![Bottom of the onboarding form: rough time windows and live place search results](walkthrough-screenshots/08-onboarding-bottom.jpg)
 
 ---
 
 ## Today (`/`)
 
-The home screen: an AI-written daily reading (generated server-side via Groq, from chart facts only — never personal details), a breakdown of the day's astrological themes, and the to-do list ranked against those themes. Each of the top 3 tasks shows the single strongest reason it's ranked where it is; every task shows its numeric score.
+The home screen. A short pull-quote from the AI-written daily reading (generated server-side via Groq, from chart facts only — never personal details) expands in place to the full reading plus a plain-language "why" behind each of today's themes — no astrology jargon assumed. Below that, a one-line mood summary and Best / Caution / All tabs over the ranked to-do list. Each task shows a plain-language tier chip (Best, Better, Good, Gentle) with the full scoring breakdown on hover.
 
-![Today screen with reading, themes, and ranked tasks](walkthrough-screenshots/01-today.jpg)
+![Today screen with the quote hero and Best tab open](walkthrough-screenshots/01-today.jpg)
 
 ---
 
 ## Tasks (`/tasks`)
 
-The full task list — open tasks first, then recently completed ones (crossed out). Add, edit, and delete (with a confirm step) all happen inline.
+The full task list — open tasks first, then completed (last 7 days). A "Sort by" toggle switches the open-task order between due date and today's points, with the same hover breakdown as Today. Add, edit, and delete (with a confirm step) all happen inline.
 
 ![Tasks list](walkthrough-screenshots/02-tasks.jpg)
 
@@ -66,21 +56,21 @@ Adds exact degrees, houses, and a full natal aspects table.
 
 ![Settings screen](walkthrough-screenshots/06-settings.jpg)
 
-Currently just the data-reset option. Edit-birth-details and About/credits are still open items for M8.
+Data reset (with a confirm step) and the Appearance toggle. About/credits is still an open item for M8.
 
 ---
 
 ## Night vs. Day theme
 
-The app follows `prefers-color-scheme` with no manual toggle — deep indigo and stars at night, a sunrise gradient and drifting clouds by day.
+Settings → Appearance has an Auto / Day / Night toggle (Auto follows `prefers-color-scheme`). Deep indigo and stars at night, a sunrise gradient and drifting clouds by day.
 
 **Night** (see Today screenshot above) · **Day:**
 
-![Today screen in the Day theme](walkthrough-screenshots/10-today-day-theme.jpg)
+![Today screen in the Day theme](walkthrough-screenshots/09-today-day-theme.jpg)
 
 ---
 
 ## Notes
 
-- All screenshots are desktop width; the layout is also responsive down to phone widths (verified at 375px and 320px) as of the 2026-11-03 responsive pass.
+- All screenshots are desktop width; the layout is also responsive down to phone widths (verified at 375px and 320px).
 - Not pictured: loading/empty/error states (e.g. "No tasks yet," a failed Groq call falling back to a quick-guide reading, a failed localStorage save) — these all exist per-screen but are harder to capture as a static screenshot.

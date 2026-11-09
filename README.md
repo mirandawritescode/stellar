@@ -6,7 +6,7 @@ Astro Planner reads your natal chart and the day's planetary transits, writes a 
 
 <!-- TODO before sharing: record a fresh 10-second GIF of the Today screen (the current quote-hero + tabs layout) and link it here. It's the first thing reviewers look at. -->
 
-See [`docs/walkthrough.md`](docs/walkthrough.md) for a screenshot tour — note it predates the Today page redesign (quote hero, Best/Caution/All tabs), so the Today screenshots there are out of date.
+See [`docs/walkthrough.md`](docs/walkthrough.md) for a screenshot tour of every screen.
 
 ---
 

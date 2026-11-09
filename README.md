@@ -1,10 +1,10 @@
-# Astro Planner
+# Stellar
 
 **Your to-do list, arranged around your star chart.**
 
-Astro Planner reads your natal chart and the day's planetary transits, writes a short daily reading in plain language, and ranks your to-do list for the day.
+Stellar reads your natal chart and the day's planetary transits, writes a short daily reading in plain language, and ranks your to-do list for the day. Let's make today stellar!
 
-![Astro Planner demo: the Today screen's quote hero expanding to the full reading and why-list, then paging through the Best, Caution, and All tabs](docs/screenshots/demo.gif)
+![Stellar demo: the Today screen's quote hero expanding to the full reading and why-list, then paging through the Best, Caution, and All tabs](docs/screenshots/demo.gif)
 
 See [`docs/walkthrough.md`](docs/walkthrough.md) for a screenshot tour of every screen.
 

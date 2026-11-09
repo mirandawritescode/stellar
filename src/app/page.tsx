@@ -238,6 +238,7 @@ export default function TodayPage() {
       <section className="flex flex-col items-center gap-2 text-center">
         <p className="section-label">{dateLabel}</p>
         <p className="text-muted text-xs">Moon phase &middot; {dayThemes.moonPhase}</p>
+        <p className="text-muted text-xs italic">Let&apos;s make today stellar!</p>
         {birthData.name && <h1 className="heading-display text-xl">Hi, {birthData.name}</h1>}
 
         {readingLoading && !reading && <p className="text-muted text-sm">Loading today&apos;s reading...</p>}

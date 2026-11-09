@@ -1,4 +1,4 @@
-# Astro Planner — Walkthrough
+# Stellar — Walkthrough
 
 A screenshot tour of every screen in the app, as of 2026-11-09 (through M7, plus the Today page redesign and Night/Day toggle built after). Screenshots are from the Night theme unless noted; see the bottom of this doc for the Day theme.
 

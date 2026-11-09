@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Astro Planner",
-    short_name: "Astro Planner",
+    name: "Stellar",
+    short_name: "Stellar",
     description: "Your to-do list, arranged around your star chart.",
     start_url: "/",
     display: "standalone",

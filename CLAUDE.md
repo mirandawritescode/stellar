@@ -4,7 +4,7 @@ Project memory for Claude Code. Read this first in every session, then `docs/spe
 
 ## What we're building
 
-**Astro Planner** (working name): a free web app that reads a user's natal chart and the day's transits, writes a short AI daily reading, and ranks their to-do list for the day. Desktop-first, and responsive down to phone widths; a dedicated mobile-first redesign is still deferred (see `docs/spec.md` section 11).
+**Stellar**: a free web app that reads a user's natal chart and the day's transits, writes a short AI daily reading, and ranks their to-do list for the day. Desktop-first, and responsive down to phone widths; a dedicated mobile-first redesign is still deferred (see `docs/spec.md` section 11).
 
 - Owner: Mira, an experienced web developer who is new to Claude Code.
 - Goal: a working, portfolio-quality v1 in **2 weeks** (about 20 hours total), running **locally only** for now.

@@ -1,4 +1,4 @@
-# Astro Planner — v1 Build Spec
+# Stellar — v1 Build Spec
 
 Save this file as `docs/spec.md`. It's the source of truth for v1. `CLAUDE.md` holds the working rules; this file holds what to build.
 
@@ -303,7 +303,7 @@ Write the tests first: one test per factor, plus ties and an empty list.
 
 ### 8.3 Prompt (starting point)
 **System:**
-> You are the voice of Astro Planner, a daily planning app. Write a short daily reading from the astrological facts provided. Tone: [warm and practical, lightly mystical]. Ground every statement in the facts given; never invent placements or aspects. If the birth time is unknown, never mention houses or the rising sign. No predictions about health, money outcomes, or relationships ending. Return JSON only: {"title": string (max 6 words), "reading": string (80–120 words), "tip": string (one sentence linking today's themes to getting things done), "themes": array of the theme names given}.
+> You are the voice of Stellar, a daily planning app. Write a short daily reading from the astrological facts provided. Tone: [warm and practical, lightly mystical]. Ground every statement in the facts given; never invent placements or aspects. If the birth time is unknown, never mention houses or the rising sign. No predictions about health, money outcomes, or relationships ending. Return JSON only: {"title": string (max 6 words), "reading": string (80–120 words), "tip": string (one sentence linking today's themes to getting things done), "themes": array of the theme names given}.
 
 **User:** a compact JSON block with natal Sun/Moon/rising (when known), today's transit aspects with orbs, moon phase, retrogrades, `DayThemes`, and `missing: ["birthTime"]` when relevant.
 
@@ -419,9 +419,9 @@ Work in this order. Each milestone ends with `npm run check` passing and a local
 
 | Decision | Default until Mira decides |
 | --- | --- |
-| App name | [Astro Planner] |
+| App name | Decided — Stellar |
 | Reading tone | [warm and practical, lightly mystical] |
 | Astrology system | [Western tropical] |
 | House system | [Placidus] |
 | Colors and fonts | Decided — Night/Day theme, see section 11 |
-| Chart library license | Must be confirmed before launch |
+| Chart library license | Decided — Unlicense (public domain), confirmed |

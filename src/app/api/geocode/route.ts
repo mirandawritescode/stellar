@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
     const response = await scheduleNominatimCall(() =>
       fetch(buildNominatimUrl(q), {
         headers: {
-          "User-Agent": `Astro Planner (${contactEmail})`,
+          "User-Agent": `Stellar (${contactEmail})`,
         },
       }),
     );

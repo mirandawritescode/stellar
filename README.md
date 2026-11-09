@@ -69,7 +69,7 @@ v1 is built in eight milestones (see [`docs/spec.md`](docs/spec.md), section 13)
 | M5. Transits, themes, reading | Done |
 | M6. Ranked plan | Done |
 | M7. Install and polish | Done |
-| M8. Wrap-up | In progress |
+| M8. Wrap-up | Done |
 
 Next up after v1: hosting, morning energy check-in, hour-by-hour view, chart wheel, optional sign-in, calendar and push notifications.
 

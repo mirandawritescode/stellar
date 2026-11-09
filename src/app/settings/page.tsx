@@ -95,6 +95,18 @@ export default function SettingsPage() {
         )}
         <p className="text-muted text-xs">Auto follows your system&apos;s light/dark setting.</p>
       </section>
+
+      <section className="glass-card mx-auto flex w-full max-w-[360px] flex-col items-center gap-2 p-5 text-center">
+        <p className="section-label">About</p>
+        <p className="text-sm">
+          Astro Planner reads your natal chart and the day&apos;s transits, writes a short daily reading,
+          and ranks your to-do list for the day. Everything stays in your browser.
+        </p>
+        <p className="text-muted text-xs">
+          Place search &copy; OpenStreetMap contributors. Chart calculations by
+          circular-natal-horoscope-js. Readings generated with Groq.
+        </p>
+      </section>
     </div>
   );
 }

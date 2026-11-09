@@ -56,7 +56,7 @@ Adds exact degrees, houses, and a full natal aspects table.
 
 ![Settings screen](walkthrough-screenshots/06-settings.jpg)
 
-Data reset (with a confirm step) and the Appearance toggle. About/credits is still an open item for M8.
+Data reset (with a confirm step), the Appearance toggle, and an About/credits card (not pictured above — added after this screenshot was taken).
 
 ---
 

@@ -394,9 +394,9 @@ Work in this order. Each milestone ends with `npm run check` passing and a local
 - [ ] Loading, empty and error states on every screen; basic accessibility pass.
 
 **M8. Wrap-up (days 13–14)**
-- [ ] Tested end to end in a desktop browser and in phone-sized view (browser dev tools); top issues fixed.
-- [ ] README updated: demo GIF, screenshots, stack, how it works, how to run it locally.
-- [ ] Settings → About lists credits.
+- [x] Tested end to end in a desktop browser and in phone-sized view (browser dev tools); top issues fixed.
+- [x] README updated: demo GIF, screenshots, stack, how it works, how to run it locally.
+- [x] Settings → About lists credits.
 
 ---
 

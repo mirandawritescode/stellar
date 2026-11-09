@@ -4,7 +4,7 @@
 
 Astro Planner reads your natal chart and the day's planetary transits, writes a short daily reading in plain language, and ranks your to-do list for the day.
 
-<!-- TODO before sharing: record a fresh 10-second GIF of the Today screen (the current quote-hero + tabs layout) and link it here. It's the first thing reviewers look at. -->
+![Astro Planner demo: the Today screen's quote hero expanding to the full reading and why-list, then paging through the Best, Caution, and All tabs](docs/screenshots/demo.gif)
 
 See [`docs/walkthrough.md`](docs/walkthrough.md) for a screenshot tour of every screen.
 
@@ -78,7 +78,8 @@ Next up after v1: hosting, morning energy check-in, hour-by-hour view, chart whe
 **Prerequisites:** Node.js (current LTS) and a free Groq API key.
 
 ```bash
-cd astro-planner
+git clone https://github.com/mirandawritescode/stellar.git
+cd stellar
 npm install
 cp .env.example .env.local   # then fill in your own values
 npm run dev

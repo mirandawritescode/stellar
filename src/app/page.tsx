@@ -140,7 +140,7 @@ export default function TodayPage() {
 
   if (!ready || !birthData || !dayThemes || tasks === undefined) {
     return (
-      <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 p-6">
+      <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 px-6 pt-6 nav-safe-bottom">
         <p className="text-muted text-sm">Loading...</p>
       </div>
     );
@@ -230,7 +230,7 @@ export default function TodayPage() {
   const dateLabel = `${today.toFormat("cccc")} · ${today.toFormat("LLLL d")}`;
 
   return (
-    <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 p-6">
+    <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 px-6 pt-6 nav-safe-bottom">
       {saveError && <p className="text-error text-sm">{saveError}</p>}
 
       {addingTask && <TaskFormModal onClose={() => setAddingTask(false)} onSave={handleAddTask} />}

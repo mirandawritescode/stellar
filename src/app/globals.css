@@ -19,6 +19,7 @@
   --sky-particle: rgba(255, 255, 255, 0.75);
   --scanline: rgba(120, 70, 40, 0.025);
   --error: #c4425c;
+  --nav-height: 76px;
 
   color-scheme: light;
 }
@@ -353,7 +354,14 @@ input[type="radio"] {
 }
 
 .app-nav {
-  background: var(--nav-bg);
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  height: calc(var(--nav-height) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: linear-gradient(to top, var(--nav-bg) 55%, transparent);
   backdrop-filter: blur(10px);
   border-top: 1px solid var(--nav-border);
 }
@@ -364,7 +372,43 @@ input[type="radio"] {
 
 .nav-link.active {
   color: var(--accent);
-  text-shadow: 0 0 10px var(--accent-glow);
+}
+
+.nav-star {
+  width: 14px;
+  height: 14px;
+  fill: var(--text-muted);
+  opacity: 0.55;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.nav-link.active .nav-star {
+  width: 20px;
+  height: 20px;
+  fill: var(--accent);
+  opacity: 1;
+  filter: drop-shadow(0 0 7px var(--accent-glow));
+  animation: nav-star-twinkle 2.2s ease-in-out infinite;
+}
+
+@keyframes nav-star-twinkle {
+  0%,
+  100% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+
+/* Reserves room above the fixed nav so a page's last bit of content never
+   sits behind it; swap in for a container's plain bottom padding. */
+.nav-safe-bottom {
+  padding-bottom: calc(1.5rem + var(--nav-height) + env(safe-area-inset-bottom, 0px));
 }
 
 /* ---------- Sky background (stars for Night, clouds for Day) ---------- */
@@ -472,6 +516,10 @@ input[type="radio"] {
   }
 
   .cloud {
+    animation: none;
+  }
+
+  .nav-link.active .nav-star {
     animation: none;
   }
 }

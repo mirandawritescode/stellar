@@ -30,7 +30,7 @@ export default function ChartPage() {
 
   if (birthData === undefined) {
     return (
-      <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 p-6">
+      <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 px-6 pt-6 nav-safe-bottom">
         <h1 className="heading-display text-center text-lg">Chart</h1>
         <p className="text-muted text-sm">Loading...</p>
       </div>
@@ -39,7 +39,7 @@ export default function ChartPage() {
 
   if (birthData === null) {
     return (
-      <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 p-6">
+      <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 px-6 pt-6 nav-safe-bottom">
         <h1 className="heading-display text-center text-lg">Chart</h1>
         <p className="text-muted text-sm">No birth details saved yet.</p>
         <Link href="/onboarding" className="text-accent text-sm font-medium underline">
@@ -54,7 +54,7 @@ export default function ChartPage() {
     chart = computeNatalChart(birthData);
   } catch {
     return (
-      <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 p-6">
+      <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 px-6 pt-6 nav-safe-bottom">
         <h1 className="heading-display text-center text-lg">Chart</h1>
         <p className="text-error text-sm">
           Something went wrong reading your chart. Try re-entering your birth details.
@@ -71,7 +71,7 @@ export default function ChartPage() {
   const housesEstimated = chart.ascendant?.estimated ?? false;
 
   return (
-    <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 p-6">
+    <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 px-6 pt-6 nav-safe-bottom">
       <div className="relative flex items-center justify-end">
         <h1 className="heading-display absolute inset-x-0 text-center text-lg">Chart</h1>
         <button type="button" onClick={() => setDetailed((d) => !d)} className="btn">

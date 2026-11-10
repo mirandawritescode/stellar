@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { isActiveRoute, TABS } from "@/lib/nav";
+import { SPARKLE_PATH } from "@/lib/sparkle";
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -12,8 +13,8 @@ export default function BottomNav() {
   }
 
   return (
-    <nav className="app-nav sticky bottom-0">
-      <ul className="mx-auto flex max-w-[640px] items-stretch justify-around">
+    <nav className="app-nav">
+      <ul className="mx-auto flex h-full max-w-[640px] items-center justify-around">
         {TABS.map((tab) => {
           const active = isActiveRoute(pathname, tab.href);
           return (
@@ -21,10 +22,13 @@ export default function BottomNav() {
               <Link
                 href={tab.href}
                 aria-current={active ? "page" : undefined}
-                className={`nav-link flex min-h-[44px] items-center justify-center py-2 text-sm font-medium ${
+                className={`nav-link flex min-h-[44px] flex-col items-center justify-center gap-1.5 text-xs font-medium ${
                   active ? "active" : ""
                 }`}
               >
+                <svg className="nav-star" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d={SPARKLE_PATH} />
+                </svg>
                 {tab.label}
               </Link>
             </li>

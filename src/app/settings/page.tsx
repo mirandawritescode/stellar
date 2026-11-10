@@ -33,7 +33,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 p-6">
+    <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 px-6 pt-6 nav-safe-bottom">
       <h1 className="heading-display text-center text-lg">Settings</h1>
 
       <section className="arch-card mx-auto flex w-full max-w-[360px] flex-col items-center gap-3 text-center">

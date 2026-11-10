@@ -1,12 +1,8 @@
 import { ImageResponse } from "next/og";
+import { SPARKLE_PATH } from "@/lib/sparkle";
 
 const NIGHT_BG = "#100d20";
 const ACCENT = "#c9b8ff";
-
-// A four-pointed sparkle, drawn as a path instead of the "✦" character:
-// the ImageResponse renderer's default font doesn't include that glyph.
-const SPARKLE_PATH =
-  "M12 0c0 0 1.5 8.5 4 11 2.5 2.5 8 1 8 1s-5.5 1.5-8 4c-2.5 2.5-4 8-4 8s-1.5-5.5-4-8c-2.5-2.5-8-4-8-4s5.5 1.5 8-1c2.5-2.5 4-11 4-11z";
 
 export function renderAppIcon(size: number, { rounded = true }: { rounded?: boolean } = {}) {
   const glyphSize = size * 0.56;

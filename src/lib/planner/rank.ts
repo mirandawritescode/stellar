@@ -73,11 +73,15 @@ function computeFactors(task: Task, day: DayThemes, today: string): ScoringFacto
     });
   }
 
-  if (day.caution.some((c) => c.theme === task.category)) {
+  // Skip the caution factor entirely when the same category already matched
+  // a theme: different planets can make one category both a top theme and a
+  // caution at once, but once it's favored today, it's just favored -- no
+  // "tougher aspect" footnote, no -1.
+  if (!matchingTheme && day.caution.some((c) => c.theme === task.category)) {
     factors.push({
       points: CAUTION_POINTS,
       priority: 4,
-      reason: shortThemeReason(task.category, matchingTheme ? "mixed" : "caution"),
+      reason: shortThemeReason(task.category, "caution"),
     });
   }
 

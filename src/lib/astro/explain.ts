@@ -108,16 +108,8 @@ export function explainCaution(entry: { theme: Theme; reasons: string[] }): Them
   };
 }
 
-/**
- * A short, planet-free phrase for tight spaces (task hover, factor list).
- * "mixed" is for a category that's both a top theme and in the raw caution
- * list at once (different planets driving each) -- the task's own good-theme
- * reason already says it's favored, so this one shouldn't repeat "go gently
- * on {label}" right next to that and read as a flat contradiction.
- */
-export function shortThemeReason(theme: Theme, polarity: "good" | "caution" | "mixed"): string {
+/** A short, planet-free phrase for tight spaces (task hover, factor list). */
+export function shortThemeReason(theme: Theme, polarity: "good" | "caution"): string {
   const label = TASK_CATEGORY_LABELS[theme];
-  if (polarity === "good") return `${label} is favored today`;
-  if (polarity === "mixed") return "Also has a tougher aspect today";
-  return `Go gently on ${label} today`;
+  return polarity === "good" ? `${label} is favored today` : `Go gently on ${label} today`;
 }

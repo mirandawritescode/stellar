@@ -84,10 +84,10 @@ describe("rankTasks — factor 5: category is in caution", () => {
     expect(ranked.reason).toBe("Go gently on Social today");
   });
 
-  it("rewords the caution factor when the same category is also a top theme", () => {
+  it("drops the caution factor entirely when the same category is also a top theme", () => {
     // Different planets can make the same category both a top theme and a
-    // caution at once; the factor list shouldn't flatly contradict itself
-    // with "Social is favored today" right next to "Go gently on Social".
+    // caution at once; once it's favored today, it's just favored -- no
+    // separate "tougher aspect" factor and no -1.
     const day: DayThemes = {
       date: TODAY,
       themes: [{ theme: "social", strength: 2, reasons: ["Venus trine your Sun"] }],
@@ -96,11 +96,8 @@ describe("rankTasks — factor 5: category is in caution", () => {
     };
     const t = task({ id: "a", category: "social" });
     const [ranked] = rankTasks([t], day, TODAY);
-    expect(ranked.score).toBe(3); // +4 (strength 2 x 2) - 1 (caution)
-    expect(ranked.factors).toEqual([
-      { points: 4, reason: "Social is favored today" },
-      { points: -1, reason: "Also has a tougher aspect today" },
-    ]);
+    expect(ranked.score).toBe(4); // +4 (strength 2 x 2) only
+    expect(ranked.factors).toEqual([{ points: 4, reason: "Social is favored today" }]);
   });
 });
 

@@ -60,4 +60,8 @@ describe("shortThemeReason", () => {
   it("builds a short caution-polarity phrase from the category label", () => {
     expect(shortThemeReason("money", "caution")).toBe("Go gently on Money today");
   });
+
+  it("builds a mixed-polarity phrase that doesn't repeat the category label", () => {
+    expect(shortThemeReason("money", "mixed")).toBe("Also has a tougher aspect today");
+  });
 });

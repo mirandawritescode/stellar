@@ -283,6 +283,8 @@ Ties: earlier due date first, then oldest `createdAt`. Completed tasks are exclu
 
 **Reasons** (top 3 only), from the strongest factor: "Due today", "Overdue since Mon", "Calls & messages is favored today", "Go gently on Calls & messages today". As of 2026-11-06, the theme-match and caution reasons are plain-language (`shortThemeReason` in `src/lib/astro/explain.ts`) rather than raw aspect text — the full astrology detail still lives in `DayThemes.themes[].reasons`/`caution[].reasons` and surfaces in Today's "why" list (3.4) instead.
 
+A category can be both a top theme and in caution at once (different planets driving each). As of 2026-11-10, the caution factor's reason becomes "Also has a tougher aspect today" (`shortThemeReason(theme, "mixed")`) whenever that task's category also matched a theme, instead of repeating "Go gently on {label} today" right next to "{label} is favored today" — the points (+theme, −1 caution) are unchanged, only the wording. Today's tab/tier placement (3.4) also uses the theme-filtered caution list for this same reason, so a task is never labeled Gentle for a category the mood line just called favored.
+
 Write the tests first: one test per factor, plus ties and an empty list.
 
 ---

@@ -77,7 +77,7 @@ function computeFactors(task: Task, day: DayThemes, today: string): ScoringFacto
     factors.push({
       points: CAUTION_POINTS,
       priority: 4,
-      reason: shortThemeReason(task.category, "caution"),
+      reason: shortThemeReason(task.category, matchingTheme ? "mixed" : "caution"),
     });
   }
 

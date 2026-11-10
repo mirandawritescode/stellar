@@ -209,9 +209,11 @@ export default function TodayPage() {
   // A task's category can land it in today's caution list even when its
   // overall score is high (e.g. it's also overdue) -- that's still a real
   // "go gently" signal, so it's excluded from Best/Better/Good up front
-  // rather than only checked once a task falls out of the top 3.
+  // rather than only checked once a task falls out of the top 3. Uses
+  // cautionToShow (not the raw list) so a task never gets flagged "go
+  // gently" for a category the mood line just said today favors.
   const cautionIds = new Set(
-    ranked.filter((r) => dayThemes.caution.some((c) => c.theme === r.task.category)).map((r) => r.task.id),
+    ranked.filter((r) => cautionToShow.some((c) => c.theme === r.task.category)).map((r) => r.task.id),
   );
   const nonCautionRanked = ranked.filter((r) => !cautionIds.has(r.task.id));
   const bestForToday = nonCautionRanked.slice(0, 3);

@@ -21,9 +21,9 @@ import { TASK_CATEGORY_LABELS } from "@/lib/types";
 import type { BirthData, DailyReading, Task } from "@/lib/types";
 
 type Tab = "best" | "caution" | "all";
+type Tier = { label: string; muted: boolean };
 
-function tierFor(taskId: string, index: number, cautionIds: Set<string>): { label: string; muted: boolean } {
-  if (cautionIds.has(taskId)) return { label: "Gentle", muted: true };
+function tierForPosition(index: number): Tier {
   if (index === 0) return { label: "Best", muted: false };
   if (index === 1) return { label: "Better", muted: false };
   if (index === 2) return { label: "Good", muted: false };
@@ -206,9 +206,17 @@ export default function TodayPage() {
   const cautionToShow = dayThemes.caution.filter((c) => !topThemeKeys.has(c.theme));
 
   const ranked = rankTasks(tasks, dayThemes, dayThemes.date);
-  const bestForToday = ranked.slice(0, 3);
-  const badForToday = ranked.slice(3).filter((r) => dayThemes.caution.some((c) => c.theme === r.task.category));
-  const cautionIds = new Set(badForToday.map((r) => r.task.id));
+  // A task's category can land it in today's caution list even when its
+  // overall score is high (e.g. it's also overdue) -- that's still a real
+  // "go gently" signal, so it's excluded from Best/Better/Good up front
+  // rather than only checked once a task falls out of the top 3.
+  const cautionIds = new Set(
+    ranked.filter((r) => dayThemes.caution.some((c) => c.theme === r.task.category)).map((r) => r.task.id),
+  );
+  const nonCautionRanked = ranked.filter((r) => !cautionIds.has(r.task.id));
+  const bestForToday = nonCautionRanked.slice(0, 3);
+  const badForToday = ranked.filter((r) => cautionIds.has(r.task.id));
+  const tierByTaskId = new Map<string, Tier>(nonCautionRanked.map((r, i) => [r.task.id, tierForPosition(i)]));
 
   const goodLabels = dayThemes.themes.map((t) => TASK_CATEGORY_LABELS[t.theme]);
   const cautionLabels = cautionToShow.map((c) => TASK_CATEGORY_LABELS[c.theme]);
@@ -325,7 +333,7 @@ export default function TodayPage() {
               <p className="text-muted text-sm">No open tasks yet. Add your first one to get started.</p>
             ) : (
               <ul className="flex flex-col gap-1">
-                {bestForToday.map((r, i) => renderTaskRow(r, tierFor(r.task.id, i, cautionIds)))}
+                {bestForToday.map((r) => renderTaskRow(r, tierByTaskId.get(r.task.id)!))}
               </ul>
             ))}
 
@@ -340,10 +348,10 @@ export default function TodayPage() {
 
           {tab === "all" && (
             <ul className="flex flex-col gap-1">
-              {ranked.map((r, i) =>
+              {ranked.map((r) =>
                 renderTaskRow(
                   r,
-                  tierFor(r.task.id, i, cautionIds),
+                  cautionIds.has(r.task.id) ? { label: "Gentle", muted: true } : tierByTaskId.get(r.task.id)!,
                   cautionIds.has(r.task.id) ? CAUTION_REASON : undefined,
                 ),
               )}

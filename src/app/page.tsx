@@ -197,7 +197,14 @@ export default function TodayPage() {
             r.reason && <p className="text-accent text-xs">{r.reason}</p>
           )}
         </div>
-        <PointsChip score={r.score} factors={r.factors} label={tier.label} muted={tier.muted} />
+        <PointsChip
+          score={r.score}
+          // A gentle row leaves due-date urgency out of the breakdown too,
+          // not just the headline -- same reasoning as the note above.
+          factors={note ? r.factors.filter((f) => f.kind !== "due") : r.factors}
+          label={tier.label}
+          muted={tier.muted}
+        />
       </li>
     );
   }

@@ -213,7 +213,7 @@ describe("rankTasks — other behavior", () => {
     });
     const [ranked] = rankTasks([t], day, TODAY);
     expect(ranked.factors).toEqual([
-      { points: 4, reason: "Due today" },
+      { points: 4, reason: "Due today", kind: "due" },
       { points: 4, reason: "Calls & messages is favored today" },
       { points: 1, reason: "It's been sitting a while" },
     ]);
@@ -228,6 +228,6 @@ describe("rankTasks — other behavior", () => {
     ];
     const ranked = rankTasks(tasks, EMPTY_THEMES, TODAY);
     expect(ranked[3].reason).toBeUndefined();
-    expect(ranked[3].factors).toEqual([{ points: 5, reason: "Overdue since Wed" }]);
+    expect(ranked[3].factors).toEqual([{ points: 5, reason: "Overdue since Wed", kind: "due" }]);
   });
 });

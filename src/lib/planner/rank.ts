@@ -4,6 +4,10 @@ import type { DayThemes, Task } from "@/lib/types";
 export interface ScoreFactor {
   points: number;
   reason: string;
+  /** Tags the due-date factors (overdue/due today/due soon) so a "go gently"
+   * context can leave them out of the breakdown entirely, not just the
+   * headline reason. */
+  kind?: "due";
 }
 
 export interface RankedTask {
@@ -18,6 +22,7 @@ interface ScoringFactor {
   points: number;
   priority: number;
   reason: string;
+  kind?: "due";
 }
 
 const OVERDUE_POINTS = 5;
@@ -52,14 +57,16 @@ function computeFactors(task: Task, day: DayThemes, today: string): ScoringFacto
         points: OVERDUE_POINTS,
         priority: 0,
         reason: `Overdue since ${formatShortWeekday(task.dueDate)}`,
+        kind: "due",
       });
     } else if (diff === 0) {
-      factors.push({ points: DUE_TODAY_POINTS, priority: 1, reason: "Due today" });
+      factors.push({ points: DUE_TODAY_POINTS, priority: 1, reason: "Due today", kind: "due" });
     } else if (diff <= DUE_SOON_WINDOW_DAYS) {
       factors.push({
         points: DUE_SOON_POINTS,
         priority: 2,
         reason: `Due ${formatShortWeekday(task.dueDate)}`,
+        kind: "due",
       });
     }
   }
@@ -109,7 +116,7 @@ export function rankTasks(tasks: Task[], day: DayThemes, today: string): RankedT
     }, undefined);
     const sortedFactors = [...factors]
       .sort((a, b) => b.points - a.points)
-      .map(({ points, reason }) => ({ points, reason }));
+      .map(({ points, reason, kind }) => ({ points, reason, kind }));
     return { task, score, reason: topFactor?.reason, factors: sortedFactors };
   });
 

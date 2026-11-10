@@ -188,8 +188,14 @@ export default function TodayPage() {
         <div className="min-h-[44px] flex-1 py-2">
           <p className="text-sm font-medium">{r.task.title}</p>
           <p className="text-muted text-xs">{TASK_CATEGORY_LABELS[r.task.category]}</p>
-          {r.reason && <p className="text-accent text-xs">{r.reason}</p>}
-          {note && <p className="text-muted text-xs italic">{note}</p>}
+          {/* A gentle note (overdue, due today, ...) reads as pressure the "go
+              gently" framing is explicitly trying to avoid, so it takes over
+              this line instead of stacking underneath it. */}
+          {note ? (
+            <p className="text-muted text-xs italic">{note}</p>
+          ) : (
+            r.reason && <p className="text-accent text-xs">{r.reason}</p>
+          )}
         </div>
         <PointsChip score={r.score} factors={r.factors} label={tier.label} muted={tier.muted} />
       </li>

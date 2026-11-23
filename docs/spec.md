@@ -22,7 +22,7 @@ They set up their birth details once. Everything is stored in their browser; the
 - Runs locally with a portfolio-quality README; hosting comes later.
 
 ### Non-goals for v1
-See section 14 (v2 milestones) and section 15 (further-out v2 backlog).
+See section 14 (v2 milestones) and section 15 (Backlog).
 
 ---
 
@@ -429,9 +429,10 @@ Started 2026-11-23. Each milestone ends with `npm run check` passing and a commi
 
 ---
 
-## 15. v2 backlog (further out, not yet scheduled)
+## 15. Backlog
 
 - Dedicated mobile-first redesign: its own small-screen layout/UX (not just the responsive safety-net reflow built in v1)
+- Educational layer for readers unfamiliar with astrology — e.g. glossary/tooltips for terms that show up in readings and the "why" list (retrograde, trine, houses, rising sign), maybe a short astrology-basics primer
 - Morning energy check-in that adjusts the day's load
 - Hour-by-hour plan view
 - Optional sign-in and sync (Supabase free tier)

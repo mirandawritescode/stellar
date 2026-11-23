@@ -84,4 +84,4 @@ docs/               spec, project plan, decision notes
 
 ## Out of scope for v1
 
-v1 shipped (see `docs/spec.md` section 13 — all milestones done, deployed at stellarday.vercel.app). V2 is now in planning: section 14 has the active v2 milestones (CI, demo mode, chart wheel, and more — portfolio-polish focused), section 15 has the further-out backlog (sign-in and sync, calendar, push notifications, energy check-in, hour-by-hour view, custom domain). Don't build v2 items unless Mira asks for that milestone specifically.
+v1 shipped (see `docs/spec.md` section 13 — all milestones done, deployed at stellarday.vercel.app). V2 is now in planning: section 14 has the active v2 milestones (CI, demo mode, chart wheel, and more), section 15 has the Backlog (sign-in and sync, calendar, push notifications, energy check-in, hour-by-hour view, custom domain, astrology-education layer). Don't build v2 items unless Mira asks for that milestone specifically.

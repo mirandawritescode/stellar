@@ -1,5 +1,7 @@
 # Stellar
 
+[![Check](https://github.com/mirandawritescode/stellar/actions/workflows/check.yml/badge.svg)](https://github.com/mirandawritescode/stellar/actions/workflows/check.yml)
+
 **Your to-do list, arranged around your star chart.**
 
 Stellar reads your natal chart and the day's planetary transits, writes a short daily reading in plain language, and ranks your to-do list for the day. Let's make today stellar!
@@ -71,7 +73,16 @@ v1 is built in eight milestones (see [`docs/spec.md`](docs/spec.md), section 13)
 | M7. Install and polish | Done |
 | M8. Wrap-up | Done |
 
-Next up after v1: hosting, morning energy check-in, hour-by-hour view, chart wheel, optional sign-in, calendar and push notifications.
+V2 is in progress — see [`docs/spec.md`](docs/spec.md), sections 14–15 for what's next.
+
+## How this was built
+
+Built end-to-end with Claude Code, as a deliberate process rather than one long prompt:
+
+- **Tests first.** Astrology math, transit/theme rules, and task ranking are pure functions in `src/lib/`, each with its own Vitest file in [`src/test/`](src/test/) written alongside the logic, not after it.
+- **Mockups before code, for anything visual.** UI redesigns — the Today page's quote-hero/tabs layout, the constellation-star bottom nav — started as throwaway HTML mockups to react to and pick from, before any real component code was written.
+- **Bugs get chased to the actual cause.** A ranking bug where a task flagged "go gently" could still show up labeled "Good" in the Best tab took three small, separate fixes (tab placement, then a hover-text contradiction, then the scoring itself) rather than one broad patch over the symptom.
+- `docs/spec.md` is the living spec: every build decision, past and upcoming, is tracked there rather than scattered across chat history.
 
 ## Run it locally
 

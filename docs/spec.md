@@ -407,9 +407,9 @@ Work in this order. Each milestone ends with `npm run check` passing and a local
 Started 2026-11-23. Each milestone ends with `npm run check` passing and a commit, same as v1. No paid services, no accounts/backend added — still $0, still localStorage-only.
 
 **M9. Ship the story (process credibility)**
-- [ ] CI: a GitHub Actions workflow running `npm run check` on every push; a status badge in the README
-- [ ] README gets a "How this was built" section: the milestone-by-milestone build, TDD, the brainstorming/mockup step before the nav redesign, the ranking-logic bug chase — the actual process, not just the result
-- [ ] A link to the GitHub repo in the app itself, next to the existing credits (Settings → About)
+- [x] CI: a GitHub Actions workflow running `npm run check` on every push; a status badge in the README
+- [x] README gets a "How this was built" section: the milestone-by-milestone build, TDD, the brainstorming/mockup step before the nav redesign, the ranking-logic bug chase — the actual process, not just the result
+- [x] A link to the GitHub repo in the app itself, next to the existing credits (Settings → About)
 
 **M10. First impression for a cold visitor**
 - [ ] "Try it with sample data" entry point on Welcome/onboarding — loads a fixed demo profile and task list, skips straight to a populated Today page (no birth-date form between a reviewer and the actual app)

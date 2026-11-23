@@ -106,6 +106,14 @@ export default function SettingsPage() {
           Place search &copy; OpenStreetMap contributors. Chart calculations by
           circular-natal-horoscope-js. Readings generated with Groq.
         </p>
+        <a
+          href="https://github.com/mirandawritescode/stellar"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-accent text-xs font-medium"
+        >
+          View the source on GitHub &rsaquo;
+        </a>
       </section>
     </div>
   );

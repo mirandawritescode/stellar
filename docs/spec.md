@@ -363,37 +363,37 @@ Commit a `.env.example` with names only.
 Work in this order. Each milestone ends with `npm run check` passing and a local Git commit.
 
 **M1. Skeleton (days 1–2)**
-- [ ] Local Git repo initialized, with `.gitignore` covering `node_modules`, `.next` and `.env*`.
-- [ ] Next.js + TypeScript + Tailwind app runs at http://localhost:3000.
-- [ ] ESLint, `typecheck` script, Vitest and a combined `check` script set up.
-- [ ] Bottom tab bar with four empty pages.
+- [x] Local Git repo initialized, with `.gitignore` covering `node_modules`, `.next` and `.env*`.
+- [x] Next.js + TypeScript + Tailwind app runs at http://localhost:3000.
+- [x] ESLint, `typecheck` script, Vitest and a combined `check` script set up.
+- [x] Bottom tab bar with four empty pages.
 
 **M2. Onboarding (days 2–3)**
-- [ ] All three steps work with Back/Next and validation.
-- [ ] Place search returns results via `/api/geocode`, with attribution.
-- [ ] Birth data saved; revisiting the app skips onboarding.
+- [x] All three steps work with Back/Next and validation.
+- [x] Place search returns results via `/api/geocode`, with attribution.
+- [x] Birth data saved; revisiting the app skips onboarding.
 
 **M3. Chart (days 4–5)**
-- [ ] Natal chart computed per section 5, including unknown and approximate times.
-- [ ] Fixture tests pass.
-- [ ] Simple and detailed views; "Estimated" badges; ambiguous Moon shown correctly.
+- [x] Natal chart computed per section 5, including unknown and approximate times.
+- [x] Fixture tests pass.
+- [x] Simple and detailed views; "Estimated" badges; ambiguous Moon shown correctly.
 
 **M4. Tasks (days 6–7)**
-- [ ] Add, edit, complete, delete; categories; due dates; stored in localStorage.
-- [ ] Data survives reloads; old completed tasks cleaned up.
+- [x] Add, edit, complete, delete; categories; due dates; stored in localStorage.
+- [x] Data survives reloads; old completed tasks cleaned up.
 
 **M5. Transits, themes, reading (days 8–9)**
-- [ ] `DayThemes` computed per section 6, with tests for each rule.
-- [ ] `/api/reading` returns valid readings; cached once per day.
-- [ ] Fallback reading appears when Groq fails (test by using a bad key).
+- [x] `DayThemes` computed per section 6, with tests for each rule.
+- [x] `/api/reading` returns valid readings; cached once per day.
+- [x] Fallback reading appears when Groq fails (test by using a bad key).
 
 **M6. Ranked plan (days 10–11)**
-- [ ] `rankTasks` passes its tests.
-- [ ] Today screen shows reading, themes, top 3 with reasons, and the rest.
+- [x] `rankTasks` passes its tests.
+- [x] Today screen shows reading, themes, top 3 with reasons, and the rest.
 
 **M7. Install and polish (day 12)**
-- [ ] Manifest and icons in place (Home Screen testing on iPhone waits until the app is hosted).
-- [ ] Loading, empty and error states on every screen; basic accessibility pass.
+- [x] Manifest and icons in place (Home Screen testing on iPhone waits until the app is hosted).
+- [x] Loading, empty and error states on every screen; basic accessibility pass.
 
 **M8. Wrap-up (days 13–14)**
 - [x] Tested end to end in a desktop browser and in phone-sized view (browser dev tools); top issues fixed.

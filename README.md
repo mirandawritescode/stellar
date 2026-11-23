@@ -115,6 +115,8 @@ npm run check   # lint + type check + tests
 npm test        # tests only
 ```
 
+If `npm run check` fails on a fresh clone with `Cannot find name 'LayoutProps'`, run `npx next typegen` first — it generates Next's route types, which otherwise only appear after `npm run dev`/`build` has run once.
+
 ## Deploying
 
 The app is built to run free on [Vercel's](https://vercel.com) free plan — it's a standard Next.js app with no database, so there's nothing else to provision.

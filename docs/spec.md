@@ -3,7 +3,7 @@
 Save this file as `docs/spec.md`. It's the source of truth for v1. `CLAUDE.md` holds the working rules; this file holds what to build.
 
 **Scope:** a 2-week, $0 v1. Chart in, to-dos in, daily reading and ranked plan out.
-**Status of open decisions:** see section 15. Where a decision is still open, the default in brackets applies.
+**Status of open decisions:** see section 16. Where a decision is still open, the default in brackets applies.
 
 ---
 
@@ -22,7 +22,7 @@ They set up their birth details once. Everything is stored in their browser; the
 - Runs locally with a portfolio-quality README; hosting comes later.
 
 ### Non-goals for v1
-See section 14 (v2 backlog).
+See section 14 (v2 milestones) and section 15 (further-out v2 backlog).
 
 ---
 
@@ -335,7 +335,7 @@ Built in M7: manifest and icons via Next.js's own file conventions (`src/app/man
 
 ## 11. Design
 
-- **Desktop-first, responsive down to phone widths.** Single column, max content width 640px, centered; the same layout reflows to fit narrow screens without overflowing or breaking (verified down to 320px). A dedicated mobile-first redesign — its own small-screen layout/UX, not just "doesn't break" — is deferred to a later pass; see section 14.
+- **Desktop-first, responsive down to phone widths.** Single column, max content width 640px, centered; the same layout reflows to fit narrow screens without overflowing or breaking (verified down to 320px). A dedicated mobile-first redesign — its own small-screen layout/UX, not just "doesn't break" — is deferred to a later pass; see section 15.
 - **"Night" and "Day," not generic light/dark.** Defaults to `prefers-color-scheme` (dark → Night, light → Day). As of 2026-11-06, Settings → Appearance has an Auto/Day/Night override (`data-theme` on `<html>`, stored in `localStorage` as `ap:theme`; a `beforeInteractive` script applies it before first paint so there's no flash on reload):
   - **Night**: deep indigo-violet gradient background (`#100d20` → `#1a1434` → `#231a40`), a twinkling star field, periwinkle/lavender glow accent (`#c9b8ff`).
   - **Day**: sunrise gradient background (`#f1e3ee` → `#fbdccb` → `#ffd9a0`), slowly drifting clouds instead of stars, warm gold/coral glow accent (`#d98a4f`).
@@ -402,22 +402,47 @@ Work in this order. Each milestone ends with `npm run check` passing and a local
 
 ---
 
-## 14. v2 backlog (not in v1)
+## 14. v2 milestones (portfolio polish)
 
-- Dedicated mobile-first redesign: its own small-screen layout/UX (not just the responsive safety-net reflow built in v1), Home Screen/PWA install testing on iPhone Safari (deferred in section 11 — desktop-first for now)
-- Push to GitHub, CI with GitHub Actions, and hosting on Vercel's free plan
+Started 2026-11-23. Goal: give a technical reviewer (e.g. a prospective employer) both an impressive app *and* visible evidence of how it was built — the app alone doesn't show the Claude/superpowers process. Each milestone ends with `npm run check` passing and a commit, same as v1. No paid services, no accounts/backend added — still $0, still localStorage-only.
+
+**M9. Ship the story (process credibility)**
+- [ ] CI: a GitHub Actions workflow running `npm run check` on every push; a status badge in the README
+- [ ] README gets a "How this was built" section: the milestone-by-milestone build, TDD, the brainstorming/mockup step before the nav redesign, the ranking-logic bug chase — the actual process, not just the result
+- [ ] A link to the GitHub repo in the app itself, next to the existing credits (Settings → About)
+
+**M10. First impression for a cold visitor**
+- [ ] "Try it with sample data" entry point on Welcome/onboarding — loads a fixed demo profile and task list, skips straight to a populated Today page (no birth-date form between a reviewer and the actual app)
+- [ ] Social preview image (Next.js `opengraph-image`) so the link looks like something when pasted into Slack, email, or LinkedIn instead of a bare URL
+
+**M11. Everyday polish**
+- [ ] Skeleton loaders in place of plain "Loading…" text on Today, Tasks, and Chart
+- [ ] Streaks / completion history (e.g. "Best task done 4 days running"), derived from the `completedAt` data already stored — no new data model
+- [ ] A minimal offline fallback page (service worker) so "installable PWA" is a real, testable claim
+
+**M12. Chart wheel**
+- [ ] An SVG natal wheel — zodiac ring, planets placed by degree, aspect lines between them
+- [ ] Added as a view alongside (or toggle with) the existing list view on Chart — the computed data doesn't change, only how it's drawn
+
+**M13. Shareable daily reading card**
+- [ ] Render today's reading as a downloadable/shareable image (canvas or SVG snapshot of the quote + mood line)
+
+---
+
+## 15. v2 backlog (further out, not yet scheduled)
+
+- Dedicated mobile-first redesign: its own small-screen layout/UX (not just the responsive safety-net reflow built in v1)
 - Morning energy check-in that adjusts the day's load
 - Hour-by-hour plan view
-- Chart wheel drawing (AstroChart, MIT)
 - Optional sign-in and sync (Supabase free tier)
 - Read-only calendar (Google Calendar; iCloud via calendar link)
 - Push notifications for Home Screen users
 - Reading tone choice in Settings
-- Custom domain
+- Custom domain (needs Mira to already own one — buying one isn't a $0 option)
 
 ---
 
-## 15. Open decisions (defaults in brackets)
+## 16. Open decisions (defaults in brackets)
 
 | Decision | Default until Mira decides |
 | --- | --- |

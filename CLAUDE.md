@@ -67,7 +67,7 @@ docs/               spec, project plan, decision notes
 
 - TypeScript strict; no `any`. Shared types live in `src/lib/types.ts`.
 - Astrology and planner logic are **pure functions** in `src/lib/`, with Vitest tests. UI components stay thin.
-- Desktop-first, responsive down to phone widths (single column, max content width 640px, reflows without overflowing at narrow sizes); accessible color contrast; semantic HTML. A dedicated mobile-first layout/UX is deferred — see spec section 11 and 14.
+- Desktop-first, responsive down to phone widths (single column, max content width 640px, reflows without overflowing at narrow sizes); accessible color contrast; semantic HTML. A dedicated mobile-first layout/UX is deferred — see spec section 11 and 15.
 - Handle loading, empty and error states on every screen.
 - Dates: store ISO strings; do time-zone math with Luxon, never with raw `Date` offsets.
 
@@ -84,4 +84,4 @@ docs/               spec, project plan, decision notes
 
 ## Out of scope for v1
 
-GitHub, CI and hosting; sign-in and sync, calendar, push notifications, energy check-in, hour-by-hour view, chart wheel drawing, custom domain. Don't build these unless Mira asks; they're listed in the spec's v2 backlog.
+v1 shipped (see `docs/spec.md` section 13 — all milestones done, deployed at stellarday.vercel.app). V2 is now in planning: section 14 has the active v2 milestones (CI, demo mode, chart wheel, and more — portfolio-polish focused), section 15 has the further-out backlog (sign-in and sync, calendar, push notifications, energy check-in, hour-by-hour view, custom domain). Don't build v2 items unless Mira asks for that milestone specifically.

@@ -416,9 +416,9 @@ Started 2026-11-23. Each milestone ends with `npm run check` passing and a commi
 - [x] Social preview image (Next.js `opengraph-image`) so the link looks like something when pasted into Slack, email, or LinkedIn instead of a bare URL
 
 **M11. Everyday polish**
-- [ ] Skeleton loaders in place of plain "Loading…" text on Today, Tasks, and Chart
-- [ ] Streaks / completion history (e.g. "Best task done 4 days running"), derived from the `completedAt` data already stored — no new data model
-- [ ] A minimal offline fallback page (service worker) so "installable PWA" is a real, testable claim
+- [x] Skeleton loaders in place of plain "Loading…" text on Today, Tasks, and Chart
+- [x] Completion streak ("3-day completion streak"), derived entirely from the `completedAt` data already stored, shown on Today once it reaches 2+ days — simplified from "Best task done N days running" since retroactively knowing what *was* Best on a past day isn't reliably knowable (today's task list and due dates weren't necessarily what they were then); a plain completion streak is honest and needs no new data model
+- [x] A minimal offline fallback page at `/offline` (service worker, production-only so it doesn't fight Next's dev hot-reload) so "installable PWA" is a real, testable claim
 
 **M12. Chart wheel**
 - [ ] An SVG natal wheel — zodiac ring, planets placed by degree, aspect lines between them

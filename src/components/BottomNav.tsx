@@ -8,7 +8,7 @@ import { SPARKLE_PATH } from "@/lib/sparkle";
 export default function BottomNav() {
   const pathname = usePathname();
 
-  if (pathname.startsWith("/onboarding")) {
+  if (pathname.startsWith("/onboarding") || pathname.startsWith("/offline")) {
     return null;
   }
 

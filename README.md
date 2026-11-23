@@ -73,7 +73,15 @@ v1 is built in eight milestones (see [`docs/spec.md`](docs/spec.md), section 13)
 | M7. Install and polish | Done |
 | M8. Wrap-up | Done |
 
-V2 is in progress — see [`docs/spec.md`](docs/spec.md), sections 14–15 for what's next.
+V2 (see [`docs/spec.md`](docs/spec.md), section 14) is in progress:
+
+| Milestone | Status |
+| --- | --- |
+| M9. Ship the story | Done |
+| M10. First impression for a cold visitor | Done |
+| M11. Everyday polish | Done |
+| M12. Chart wheel | Not started |
+| M13. Shareable daily reading card | Not started |
 
 ## How this was built
 

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import ArchGlyph from "@/components/ArchGlyph";
+import Skeleton from "@/components/Skeleton";
 import { computeNatalChart } from "@/lib/astro/natal";
 import { loadBirthData } from "@/lib/storage/birthData";
 import type { BirthData, NatalChart, PlanetPosition } from "@/lib/types";
@@ -32,7 +33,12 @@ export default function ChartPage() {
     return (
       <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 px-6 pt-6 nav-safe-bottom">
         <h1 className="heading-display text-center text-lg">Chart</h1>
-        <p className="text-muted text-sm">Loading...</p>
+        <Skeleton className="h-32 w-full" />
+        <div className="flex flex-col gap-2">
+          {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+            <Skeleton key={i} className="h-11 w-full" />
+          ))}
+        </div>
       </div>
     );
   }

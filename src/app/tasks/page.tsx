@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import PointsChip from "@/components/PointsChip";
+import Skeleton from "@/components/Skeleton";
 import TaskFormModal from "@/components/TaskFormModal";
 import { computeNatalChart } from "@/lib/astro/natal";
 import { computeDayThemes } from "@/lib/astro/themes";
@@ -40,7 +41,16 @@ export default function TasksPage() {
   if (tasks === undefined || birthData === undefined) {
     return (
       <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 px-6 pt-6 nav-safe-bottom">
-        <p className="text-muted text-sm">Loading...</p>
+        <div className="relative flex items-center justify-end">
+          <Skeleton className="absolute inset-x-0 mx-auto h-6 w-20" />
+          <Skeleton className="h-11 w-24" />
+        </div>
+        <Skeleton className="h-9 w-56" />
+        <div className="flex flex-col gap-2">
+          {[0, 1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-16 w-full" />
+          ))}
+        </div>
       </div>
     );
   }

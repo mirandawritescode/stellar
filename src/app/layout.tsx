@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, IBM_Plex_Mono, Inter } from "next/font/google";
 import Script from "next/script";
 import BottomNav from "@/components/BottomNav";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import Sky from "@/components/Sky";
 import "./globals.css";
 
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {THEME_INIT_SCRIPT}
         </Script>
         <Sky />
+        <ServiceWorkerRegister />
         <main className="flex flex-1 flex-col">{children}</main>
         <BottomNav />
       </body>

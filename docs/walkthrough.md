@@ -1,6 +1,6 @@
 # Stellar — Walkthrough
 
-A screenshot tour of every screen in the app, as of 2026-11-09 (through M7, plus the Today page redesign and Night/Day toggle built after). Screenshots are from the Night theme unless noted; see the bottom of this doc for the Day theme.
+A screenshot tour of every screen in the app, as of 2026-11-23 (through M11). Screenshots are from the Night theme unless noted; see the bottom of this doc for the Day theme.
 
 ---
 
@@ -21,6 +21,10 @@ Choosing "Roughly" reveals a time-of-day picker instead of an exact time; the pl
 The home screen. A short pull-quote from the AI-written daily reading (generated server-side via Groq, from chart facts only — never personal details) expands in place to the full reading plus a plain-language "why" behind each of today's themes — no astrology jargon assumed. Below that, a one-line mood summary and Best / Caution / All tabs over the ranked to-do list. Each task shows a plain-language tier chip (Best, Better, Good, Gentle) with the full scoring breakdown on hover.
 
 ![Today screen with the quote hero and Best tab open](walkthrough-screenshots/01-today.jpg)
+
+Once you've completed a task on 2+ consecutive days, a completion streak shows up under the mood line — derived entirely from each task's `completedAt`, no separate tracking.
+
+![Today screen with a 4-day completion streak shown under the mood line](walkthrough-screenshots/10-today-streak.jpg)
 
 ---
 
@@ -60,6 +64,14 @@ Data reset (with a confirm step), the Appearance toggle, and an About/credits ca
 
 ---
 
+## Loading state
+
+Today, Tasks, and Chart all show a skeleton placeholder shaped like the real content, with a shimmer sweeping across each block, instead of plain "Loading…" text, while birth data and tasks load from the browser.
+
+![Today screen's skeleton loading state](walkthrough-screenshots/11-today-skeleton.jpg)
+
+---
+
 ## Night vs. Day theme
 
 Settings → Appearance has an Auto / Day / Night toggle (Auto follows `prefers-color-scheme`). Deep indigo and stars at night, a sunrise gradient and drifting clouds by day.
@@ -73,4 +85,5 @@ Settings → Appearance has an Auto / Day / Night toggle (Auto follows `prefers-
 ## Notes
 
 - All screenshots are desktop width; the layout is also responsive down to phone widths (verified at 375px and 320px).
-- Not pictured: loading/empty/error states (e.g. "No tasks yet," a failed Groq call falling back to a quick-guide reading, a failed localStorage save) — these all exist per-screen but are harder to capture as a static screenshot.
+- Not pictured: empty/error states (e.g. "No tasks yet," a failed Groq call falling back to a quick-guide reading, a failed localStorage save) — these all exist per-screen but are harder to capture as a static screenshot.
+- Not pictured: the sample-data demo mode (onboarding → populated Today, skipping the birth-date form) and the offline fallback page — both easy to try live rather than screenshot.

@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { DateTime } from "luxon";
 import PointsChip from "@/components/PointsChip";
+import Skeleton from "@/components/Skeleton";
 import TaskFormModal from "@/components/TaskFormModal";
 import { computeNatalChart } from "@/lib/astro/natal";
 import { computeTransits, localNoonToday } from "@/lib/astro/transits";
@@ -12,6 +13,7 @@ import { computeDayThemes } from "@/lib/astro/themes";
 import { explainCaution, explainGoodTheme } from "@/lib/astro/explain";
 import { CAUTION_REASON, rankTasks } from "@/lib/planner/rank";
 import type { RankedTask } from "@/lib/planner/rank";
+import { completionStreak } from "@/lib/planner/streak";
 import { buildFallbackReading } from "@/lib/reading";
 import type { ReadingContext } from "@/lib/reading";
 import { loadBirthData } from "@/lib/storage/birthData";
@@ -141,7 +143,18 @@ export default function TodayPage() {
   if (!ready || !birthData || !dayThemes || tasks === undefined) {
     return (
       <div className="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-4 px-6 pt-6 nav-safe-bottom">
-        <p className="text-muted text-sm">Loading...</p>
+        <div className="flex flex-col items-center gap-2">
+          <Skeleton className="h-3 w-40" />
+          <Skeleton className="h-3 w-28" />
+          <Skeleton className="h-6 w-32" />
+          <Skeleton className="h-16 w-full max-w-[420px]" />
+        </div>
+        <Skeleton className="mx-auto h-9 w-64" />
+        <div className="flex flex-col gap-2">
+          {[0, 1, 2].map((i) => (
+            <Skeleton key={i} className="h-16 w-full" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -219,6 +232,7 @@ export default function TodayPage() {
   const cautionToShow = dayThemes.caution.filter((c) => !topThemeKeys.has(c.theme));
 
   const ranked = rankTasks(tasks, dayThemes, dayThemes.date);
+  const streak = completionStreak(tasks, dayThemes.date);
   // A task's category can land it in today's caution list even when its
   // overall score is high (e.g. it's also overdue) -- that's still a real
   // "go gently" signal, so it's excluded from Best/Better/Good up front
@@ -264,7 +278,13 @@ export default function TodayPage() {
         <p className="text-muted text-xs italic">Let&apos;s make today stellar!</p>
         {birthData.name && <h1 className="heading-display text-xl">Hi, {birthData.name}</h1>}
 
-        {readingLoading && !reading && <p className="text-muted text-sm">Loading today&apos;s reading...</p>}
+        {readingLoading && !reading && (
+          <div className="flex w-full max-w-[420px] flex-col items-center gap-2 pt-1">
+            <Skeleton className="h-5 w-full" />
+            <Skeleton className="h-5 w-3/4" />
+            <Skeleton className="mt-1 h-3 w-32" />
+          </div>
+        )}
 
         {reading && (
           <>
@@ -310,6 +330,10 @@ export default function TodayPage() {
             {goodLabels.length > 0 && cautionLabels.length > 0 && " — "}
             {cautionLabels.length > 0 && <>go gently on {joinLabels(cautionLabels, "italic")}</>}.
           </p>
+        )}
+
+        {streak >= 2 && (
+          <p className="text-accent text-xs font-medium">&#10022; {streak}-day completion streak</p>
         )}
       </section>
 

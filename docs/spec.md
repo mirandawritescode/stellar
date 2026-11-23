@@ -412,8 +412,8 @@ Started 2026-11-23. Each milestone ends with `npm run check` passing and a commi
 - [x] A link to the GitHub repo in the app itself, next to the existing credits (Settings → About)
 
 **M10. First impression for a cold visitor**
-- [ ] "Try it with sample data" entry point on Welcome/onboarding — loads a fixed demo profile and task list, skips straight to a populated Today page (no birth-date form between a reviewer and the actual app)
-- [ ] Social preview image (Next.js `opengraph-image`) so the link looks like something when pasted into Slack, email, or LinkedIn instead of a bare URL
+- [x] "Try it with sample data" entry point on Welcome/onboarding — loads a fixed demo profile and task list, skips straight to a populated Today page (no birth-date form between a reviewer and the actual app)
+- [x] Social preview image (Next.js `opengraph-image`) so the link looks like something when pasted into Slack, email, or LinkedIn instead of a bare URL
 
 **M11. Everyday polish**
 - [ ] Skeleton loaders in place of plain "Loading…" text on Today, Tasks, and Chart

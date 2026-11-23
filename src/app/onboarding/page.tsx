@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ArchGlyph from "@/components/ArchGlyph";
+import { buildDemoBirthData, buildDemoTasks } from "@/lib/demo";
 import type { GeocodeResult } from "@/lib/geocode";
 import { isBirthTimeComplete, isValidBirthDate, TIME_WINDOWS } from "@/lib/onboarding";
 import { saveBirthData } from "@/lib/storage/birthData";
+import { saveTasks } from "@/lib/storage/tasks";
 import type { ApproxWindow, BirthData, TimeAccuracy } from "@/lib/types";
 
 const MAX_NAME_LENGTH = 60;
@@ -98,6 +100,12 @@ export default function OnboardingPage() {
 
     saveBirthData(birthData);
     router.push("/chart?first=1");
+  }
+
+  function handleTryDemo() {
+    saveBirthData(buildDemoBirthData());
+    saveTasks(buildDemoTasks(TODAY));
+    router.push("/");
   }
 
   return (
@@ -282,6 +290,10 @@ export default function OnboardingPage() {
 
         <button type="button" onClick={handleSubmit} className="btn btn-primary">
           Reveal my chart
+        </button>
+
+        <button type="button" onClick={handleTryDemo} className="text-accent text-sm font-medium">
+          Just exploring? Try it with sample data &rsaquo;
         </button>
       </div>
     </div>

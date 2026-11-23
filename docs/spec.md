@@ -402,9 +402,9 @@ Work in this order. Each milestone ends with `npm run check` passing and a local
 
 ---
 
-## 14. v2 milestones (portfolio polish)
+## 14. v2 milestones
 
-Started 2026-11-23. Goal: give a technical reviewer (e.g. a prospective employer) both an impressive app *and* visible evidence of how it was built — the app alone doesn't show the Claude/superpowers process. Each milestone ends with `npm run check` passing and a commit, same as v1. No paid services, no accounts/backend added — still $0, still localStorage-only.
+Started 2026-11-23. Each milestone ends with `npm run check` passing and a commit, same as v1. No paid services, no accounts/backend added — still $0, still localStorage-only.
 
 **M9. Ship the story (process credibility)**
 - [ ] CI: a GitHub Actions workflow running `npm run check` on every push; a status badge in the README
